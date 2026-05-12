@@ -355,6 +355,22 @@
   .day-card .day-count { font-size: 11px; color: #6B6B85; margin-top: 4px; }
   .row-hidden { display: none !important; }
   .review-flag { color: #B45309; font-weight: 600; font-size: 11px; }
+  .acc {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+    margin-right: 2px;
+  }
+  .acc-revolut { background: #DBEAFE; color: #1E40AF; }
+  .acc-n26 { background: #CCFBF1; color: #0F766E; }
+  .acc-amex-e { background: #D1FAE5; color: #065F46; }
+  .acc-amex-a { background: #FCE7F3; color: #BE185D; }
+  .acc-bfor { background: #FEF3C7; color: #B45309; }
+  .acc-cash-a { background: #F3F4F6; color: #4B5563; }
   .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
   .table-wrap table { min-width: 720px; }
   @media (max-width: 640px) {
@@ -614,21 +630,72 @@
 
 <div class="section">
   <h2>Detalle por categoría</h2>
+  <div class="table-wrap">
   <table>
-    <thead><tr><th>Categoría</th><th>Componentes</th><th class="num">Monto</th><th class="num">% del total</th></tr></thead>
+    <thead><tr><th>Categoría</th><th>Componentes</th><th>Cuenta(s)</th><th class="num">Monto</th><th class="num">% del total</th></tr></thead>
     <tbody>
-      <tr><td>🏨 Hoteles</td><td>Hotel Carcassonne €269.61 (2 noches, 8-10 mai, Amex Adri) + Mercure Toulouse €116.91 (1 noche, 10-11 mai, Amex Adri)</td><td class="num">€386.52</td><td class="num">32.8%</td></tr>
-      <tr><td>🍽️ Alimentación</td><td>Julia 67 · Le Petit Marcou 88.10 · Brasserie 89.60 · LE J'GO 56 · La Crêperie 18.90 · KFC 17.90 · McDonald's (10.30 + 12.40) · O Deliz 9.80 · Normal 8.70 · Mtc 4.66 · Selecta (2.50 + 3.70) · Domitys 3</td><td class="num">€392.56</td><td class="num">33.3%</td></tr>
-      <tr><td>🛫 Vuelos</td><td>Transavia Paris ↔ Toulouse · 2 pax sin maleta</td><td class="num">€202.00</td><td class="num">17.2%</td></tr>
-      <tr><td>🚂 Trenes SNCF</td><td>Toulouse → Carcassonne (€37) + Carcassonne → Toulouse (€37)</td><td class="num">€74.00</td><td class="num">6.3%</td></tr>
-      <tr><td>🏰 Château Comtal</td><td>Entrada principal €38 + adicional €13.90</td><td class="num">€51.90</td><td class="num">4.4%</td></tr>
-      <tr><td>🛍️ Souvenirs</td><td>Carrefour 25.38 + Maison Pautard 9</td><td class="num">€34.38</td><td class="num">2.9%</td></tr>
-      <tr><td>🚖 Bolts</td><td>Cotte → Orly (€12.50) + Orly → Cotte (€13.90)</td><td class="num">€26.40</td><td class="num">2.2%</td></tr>
-      <tr><td>🚇 Transporte Toulouse</td><td>Tisséo (8 mai tarde)</td><td class="num">€9.00</td><td class="num">0.8%</td></tr>
-      <tr><td>🚽 Otro</td><td>2theloo</td><td class="num">€1.00</td><td class="num">0.1%</td></tr>
-      <tr class="total-row"><td colspan="2">Total viaje</td><td class="num">€1,177.76</td><td class="num">100%</td></tr>
+      <tr><td>🏨 Hoteles</td><td>Hotel Carcassonne €269.61 (2 noches) + Mercure Toulouse €116.91 (1 noche)</td><td><span class="acc acc-amex-a">AMEX Adriana</span></td><td class="num">€386.52</td><td class="num">32.8%</td></tr>
+      <tr><td>🍽️ Alimentación</td><td>Julia 67 · Le Petit Marcou 88.10 · Brasserie 89.60 · LE J'GO 56 · O Deliz 9.80 · Normal 8.70 · Mtc 4.66 · Selecta (2.50+3.70) · Domitys 3 · McD-E 10.30 · La Crêperie 18.90 · KFC 17.90 · McD-A 12.40</td><td><span class="acc acc-revolut">Revolut</span> mayoría · <span class="acc acc-n26">N26</span> Normal + LE J'GO · <span class="acc acc-bfor">BforBank</span> Crêperie + KFC · <span class="acc acc-cash-a">Cash Adri</span> McDonald's</td><td class="num">€392.56</td><td class="num">33.3%</td></tr>
+      <tr><td>🛫 Vuelos</td><td>Transavia Paris ↔ Toulouse · 2 pax sin maleta</td><td><span class="acc acc-amex-e">AMEX Ernesto</span></td><td class="num">€202.00</td><td class="num">17.2%</td></tr>
+      <tr><td>🚂 Trenes SNCF</td><td>Toulouse → Carcassonne (€37) + Carcassonne → Toulouse (€37)</td><td><span class="acc acc-revolut">Revolut</span></td><td class="num">€74.00</td><td class="num">6.3%</td></tr>
+      <tr><td>🏰 Château Comtal</td><td>Entrada principal €38 + adicional €13.90</td><td><span class="acc acc-revolut">Revolut</span></td><td class="num">€51.90</td><td class="num">4.4%</td></tr>
+      <tr><td>🛍️ Souvenirs</td><td>Carrefour 25.38 + Maison Pautard 9</td><td><span class="acc acc-revolut">Revolut</span></td><td class="num">€34.38</td><td class="num">2.9%</td></tr>
+      <tr><td>🚖 Bolts</td><td>Cotte → Orly €12.50 + Orly → Cotte €13.90</td><td><span class="acc acc-revolut">Revolut</span> ida · <span class="acc acc-n26">N26</span> regreso</td><td class="num">€26.40</td><td class="num">2.2%</td></tr>
+      <tr><td>🚇 Transporte Toulouse</td><td>Tisséo (8 mai tarde)</td><td><span class="acc acc-revolut">Revolut</span></td><td class="num">€9.00</td><td class="num">0.8%</td></tr>
+      <tr><td>🚽 Otro</td><td>2theloo</td><td><span class="acc acc-revolut">Revolut</span></td><td class="num">€1.00</td><td class="num">0.1%</td></tr>
+      <tr class="total-row"><td colspan="3">Total viaje</td><td class="num">€1,177.76</td><td class="num">100%</td></tr>
     </tbody>
   </table>
+  </div>
+</div>
+
+<div class="section">
+  <h2>Por cuenta de pago</h2>
+  <div class="props">
+    <div class="prop-card" style="border-left:4px solid #1E40AF;">
+      <div class="name"><span class="acc acc-revolut">Revolut</span> · Ernesto</div>
+      <div class="val">€461.44</div>
+      <div class="pct">39.2%</div>
+      <div class="bar"><div class="bar-fill" style="width:39.2%; background:linear-gradient(90deg, #1E40AF, #3B82F6);"></div></div>
+      <p style="font-size:11px; color:#6B6B85; margin-top:6px;">18 cargos · cuenta personal (Joint→Personal)</p>
+    </div>
+    <div class="prop-card" style="border-left:4px solid #C026D3;">
+      <div class="name"><span class="acc acc-amex-a">AMEX Adriana</span></div>
+      <div class="val">€386.52</div>
+      <div class="pct">32.8%</div>
+      <div class="bar"><div class="bar-fill" style="width:32.8%; background:linear-gradient(90deg, #C026D3, #DB2777);"></div></div>
+      <p style="font-size:11px; color:#6B6B85; margin-top:6px;">2 hoteles · E reembolsa €298.92 (su parte)</p>
+    </div>
+    <div class="prop-card" style="border-left:4px solid #047857;">
+      <div class="name"><span class="acc acc-amex-e">AMEX Ernesto</span></div>
+      <div class="val">€202.00</div>
+      <div class="pct">17.2%</div>
+      <div class="bar"><div class="bar-fill" style="width:17.2%; background:linear-gradient(90deg, #047857, #10B981);"></div></div>
+      <p style="font-size:11px; color:#6B6B85; margin-top:6px;">Vuelos Transavia · 1 cargo</p>
+    </div>
+    <div class="prop-card" style="border-left:4px solid #0F766E;">
+      <div class="name"><span class="acc acc-n26">N26</span> · Ernesto</div>
+      <div class="val">€78.60</div>
+      <div class="pct">6.7%</div>
+      <div class="bar"><div class="bar-fill" style="width:6.7%; background:linear-gradient(90deg, #0F766E, #14B8A6);"></div></div>
+      <p style="font-size:11px; color:#6B6B85; margin-top:6px;">11 mai (regreso) · Bolt + Normal + LE J'GO · 3 cargos</p>
+    </div>
+    <div class="prop-card" style="border-left:4px solid #B45309;">
+      <div class="name"><span class="acc acc-bfor">BforBank</span> · Ernesto</div>
+      <div class="val">€36.80</div>
+      <div class="pct">3.1%</div>
+      <div class="bar"><div class="bar-fill" style="width:3.1%; background:linear-gradient(90deg, #B45309, #F59E0B);"></div></div>
+      <p style="font-size:11px; color:#6B6B85; margin-top:6px;">La Crêperie + KFC · 2 cargos</p>
+    </div>
+    <div class="prop-card" style="border-left:4px solid #6B7280;">
+      <div class="name"><span class="acc acc-cash-a">Cash Adriana</span></div>
+      <div class="val">€12.40</div>
+      <div class="pct">1.1%</div>
+      <div class="bar"><div class="bar-fill" style="width:1.1%; background:linear-gradient(90deg, #6B7280, #9CA3AF);"></div></div>
+      <p style="font-size:11px; color:#6B6B85; margin-top:6px;">McDonald's · 1 cargo</p>
+    </div>
+  </div>
+  <p class="note" style="font-size:12px; color:#6B6B85; margin-top:14px; font-style:italic;">Lo que paga cada tarjeta no equivale a quién asume el costo. Adri es invitada (su parte = €0) — solo se le reembolsa lo adelantado (Amex + cash).</p>
 </div>
 
 <div class="section">
