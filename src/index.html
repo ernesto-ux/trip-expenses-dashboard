@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Mis Viajes — Storyline 2026</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Sora', sans-serif;
+    background: #F8F7FC;
+    color: #1A1A2E;
+    padding: 40px 20px 80px;
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+  .container { max-width: 1100px; margin: 0 auto; }
+  header {
+    background: linear-gradient(135deg, #7B61FF 0%, #5B41DF 50%, #C026D3 100%);
+    color: white;
+    padding: 56px 44px;
+    border-radius: 20px;
+    margin-bottom: 32px;
+    box-shadow: 0 20px 50px rgba(123,97,255,0.28);
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '✈';
+    position: absolute;
+    top: -30px;
+    right: -20px;
+    font-size: 280px;
+    opacity: 0.08;
+    transform: rotate(-12deg);
+    line-height: 1;
+    pointer-events: none;
+  }
+  header .label {
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    font-size: 12px;
+    opacity: 0.85;
+    font-weight: 500;
+    margin-bottom: 12px;
+  }
+  header h1 {
+    font-size: 44px;
+    font-weight: 800;
+    letter-spacing: -1px;
+    margin-bottom: 10px;
+  }
+  header .sub {
+    font-size: 16px;
+    opacity: 0.9;
+    max-width: 600px;
+    font-weight: 400;
+  }
+  .summary-strip {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 14px;
+    margin-bottom: 40px;
+  }
+  .stat-card {
+    background: white;
+    padding: 20px 22px;
+    border-radius: 14px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+    border-left: 4px solid #7B61FF;
+  }
+  .stat-card .stat-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: #6B6B85;
+    font-weight: 500;
+    margin-bottom: 6px;
+  }
+  .stat-card .stat-value {
+    font-size: 26px;
+    font-weight: 700;
+    color: #1A1A2E;
+    font-variant-numeric: tabular-nums;
+  }
+  .stat-card .stat-sub {
+    font-size: 11px;
+    color: #6B6B85;
+    margin-top: 4px;
+  }
+
+  .timeline-title {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 2.5px;
+    color: #7B61FF;
+    font-weight: 700;
+    margin-bottom: 18px;
+    padding-left: 14px;
+    border-left: 4px solid #7B61FF;
+  }
+
+  .timeline {
+    position: relative;
+    padding-left: 36px;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 14px;
+    top: 12px;
+    bottom: 12px;
+    width: 2px;
+    background: linear-gradient(180deg, #7B61FF 0%, #C026D3 100%);
+    border-radius: 1px;
+  }
+  .trip {
+    position: relative;
+    background: white;
+    border-radius: 18px;
+    padding: 28px 30px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.06);
+    transition: transform 0.18s, box-shadow 0.18s;
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+  }
+  .trip:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 28px rgba(123,97,255,0.18);
+  }
+  .trip::before {
+    content: '';
+    position: absolute;
+    left: -29px;
+    top: 36px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: white;
+    border: 3px solid #7B61FF;
+    z-index: 2;
+  }
+  .trip.amsterdam::before { border-color: #C2410C; }
+  .trip.toulouse::before { border-color: #BE185D; }
+
+  .trip-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 24px;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+  }
+  .trip-title-block .month {
+    text-transform: uppercase;
+    letter-spacing: 2.5px;
+    font-size: 11px;
+    color: #6B6B85;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .trip-title-block h2 {
+    font-size: 26px;
+    font-weight: 700;
+    color: #1A1A2E;
+    line-height: 1.2;
+    margin-bottom: 4px;
+  }
+  .trip-title-block .dates {
+    font-size: 14px;
+    color: #6B6B85;
+    font-weight: 500;
+  }
+
+  .stamps-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .stamp-mini {
+    font-family: 'Sora', sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+    text-align: center;
+    padding: 7px 14px;
+    border: 2px solid currentColor;
+    border-radius: 9px;
+    letter-spacing: 1.5px;
+    position: relative;
+    background: white;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1px;
+    min-width: 90px;
+  }
+  .stamp-mini::before {
+    content: '';
+    position: absolute;
+    inset: 2px;
+    border: 1px dashed currentColor;
+    border-radius: 5px;
+    opacity: 0.55;
+    pointer-events: none;
+  }
+  .stamp-mini .ico { font-size: 14px; line-height: 1; }
+  .stamp-mini .city { font-size: 11px; line-height: 1.1; }
+  .stamp-mini .date { font-size: 7px; opacity: 0.75; letter-spacing: 1.5px; font-weight: 600; }
+  .stamp-mini.amsterdam { color: #C2410C; }
+  .stamp-mini.carcassonne { color: #B45309; }
+  .stamp-mini.toulouse { color: #BE185D; }
+
+  .trip-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 14px;
+    padding: 18px 0 0;
+    border-top: 1px solid #F0EDFF;
+  }
+  .trip-stat {
+    text-align: left;
+  }
+  .trip-stat .ts-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: #6B6B85;
+    font-weight: 500;
+    margin-bottom: 4px;
+  }
+  .trip-stat .ts-value {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1A1A2E;
+    font-variant-numeric: tabular-nums;
+  }
+  .trip-stat .ts-sub {
+    font-size: 10px;
+    color: #6B6B85;
+    margin-top: 2px;
+  }
+
+  .trip-foot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 18px;
+    padding-top: 16px;
+    border-top: 1px dashed #E5E1F5;
+  }
+  .trip-people {
+    font-size: 12px;
+    color: #6B6B85;
+  }
+  .trip-people strong { color: #1A1A2E; font-weight: 600; }
+  .trip-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #F0EDFF;
+    color: #5B41DF;
+    padding: 9px 16px;
+    border-radius: 99px;
+    font-size: 13px;
+    font-weight: 600;
+    transition: background 0.15s, transform 0.15s;
+  }
+  .trip:hover .trip-link {
+    background: linear-gradient(135deg, #7B61FF 0%, #5B41DF 100%);
+    color: white;
+    transform: translateX(2px);
+  }
+
+  .upcoming {
+    background: #FAFAFC;
+    border: 2px dashed #E5E1F5;
+    border-radius: 16px;
+    padding: 30px;
+    text-align: center;
+    margin-top: 16px;
+    position: relative;
+  }
+  .upcoming::before {
+    content: '';
+    position: absolute;
+    left: -29px;
+    top: 30px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: white;
+    border: 3px dashed #B8B5D0;
+    z-index: 2;
+  }
+  .upcoming .label {
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 11px;
+    color: #6B6B85;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .upcoming p {
+    font-size: 14px;
+    color: #8A86A8;
+    font-style: italic;
+  }
+
+  footer {
+    margin-top: 48px;
+    text-align: center;
+    font-size: 12px;
+    color: #8A86A8;
+  }
+
+  @media (max-width: 640px) {
+    body { padding: 24px 12px 60px; }
+    header { padding: 40px 24px; }
+    header h1 { font-size: 32px; }
+    header::before { font-size: 200px; right: -30px; }
+    .timeline { padding-left: 26px; }
+    .timeline::before { left: 9px; }
+    .trip::before { left: -23px; top: 30px; }
+    .upcoming::before { left: -23px; }
+    .trip { padding: 22px 20px; }
+    .trip-title-block h2 { font-size: 21px; }
+  }
+</style>
+</head>
+<body>
+<div id="pin-gate" style="position:fixed; inset:0; background:linear-gradient(135deg, #7B61FF 0%, #5B41DF 100%); display:flex; align-items:center; justify-content:center; z-index:99999; font-family:'Sora', system-ui, sans-serif;">
+  <div style="background:white; padding:40px 36px; border-radius:18px; box-shadow:0 20px 50px rgba(0,0,0,0.3); text-align:center; max-width:340px; width:90%;">
+    <div style="font-size:36px; margin-bottom:14px;">🔒</div>
+    <div style="font-size:11px; color:#6B6B85; letter-spacing:2.5px; text-transform:uppercase; margin-bottom:10px; font-weight:600;">Acceso privado</div>
+    <h2 style="font-size:20px; font-weight:700; color:#1A1A2E; margin-bottom:8px;">Introduce el PIN</h2>
+    <p style="font-size:13px; color:#6B6B85; margin-bottom:22px;">Información financiera personal</p>
+    <input type="password" id="pin-input" inputmode="numeric" maxlength="6" autocomplete="off" style="width:100%; padding:14px; font-size:24px; text-align:center; letter-spacing:8px; border:2px solid #E5E1F5; border-radius:10px; font-family:inherit; font-weight:600; color:#1A1A2E; outline:none; margin-bottom:14px;" />
+    <button id="pin-submit" style="width:100%; padding:13px; font-size:14px; background:linear-gradient(135deg, #7B61FF 0%, #5B41DF 100%); color:white; border:none; border-radius:10px; font-family:inherit; font-weight:600; cursor:pointer; letter-spacing:0.5px;">Entrar</button>
+    <div id="pin-error" style="font-size:12px; color:#DC2626; margin-top:10px; min-height:16px; font-weight:500;"></div>
+  </div>
+</div>
+<script>
+(function(){var PIN='75012',KEY='tripExpUnlocked',g=document.getElementById('pin-gate'),i=document.getElementById('pin-input'),s=document.getElementById('pin-submit'),e=document.getElementById('pin-error');if(sessionStorage.getItem(KEY)==='1'){g.remove();return;}document.documentElement.style.overflow='hidden';setTimeout(function(){i.focus();},80);function c(){if(i.value===PIN){sessionStorage.setItem(KEY,'1');g.style.transition='opacity 0.3s';g.style.opacity='0';document.documentElement.style.overflow='';setTimeout(function(){g.remove();},320);}else{e.textContent='PIN incorrecto';i.value='';i.style.borderColor='#DC2626';setTimeout(function(){i.style.borderColor='#E5E1F5';},1200);}}s.addEventListener('click',c);i.addEventListener('keydown',function(ev){if(ev.key==='Enter')c();});})();
+</script>
+<div class="container">
+
+<header>
+  <div class="label">Storyline 2026</div>
+  <h1>Mis Viajes</h1>
+  <p class="sub">Resumen y desglose de cada escapada de 2026. Clic en cualquier viaje para ver el dashboard completo.</p>
+</header>
+
+<div class="summary-strip">
+  <div class="stat-card">
+    <div class="stat-label">Total acumulado</div>
+    <div class="stat-value">€3,421</div>
+    <div class="stat-sub">Suma de los 2 viajes</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Días viajados</div>
+    <div class="stat-value">8</div>
+    <div class="stat-sub">Amsterdam 4 + Toulouse 4</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Ciudades visitadas</div>
+    <div class="stat-value">3</div>
+    <div class="stat-sub">Amsterdam, Carcassonne, Toulouse</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Viajes este año</div>
+    <div class="stat-value">2</div>
+    <div class="stat-sub">Abril · Mayo</div>
+  </div>
+</div>
+
+<div class="timeline-title">Storyline cronológico</div>
+
+<div class="timeline">
+
+  <div class="upcoming">
+    <div class="label">Próximo viaje</div>
+    <p>Sin viajes programados aún. Cuando registres uno, aparecerá aquí.</p>
+  </div>
+
+  <a class="trip toulouse" href="toulouse-carcassonne-2026-05.html">
+    <div class="trip-head">
+      <div class="trip-title-block">
+        <div class="month">Mayo 2026 · más reciente</div>
+        <h2>Toulouse + Carcassonne 🏰🌸</h2>
+        <div class="dates">8 — 11 mayo · 4 días</div>
+      </div>
+      <div class="stamps-row">
+        <div class="stamp-mini carcassonne">
+          <div class="ico">🏰</div>
+          <div class="city">Carcassonne</div>
+          <div class="date">8 — 10 · V</div>
+        </div>
+        <div class="stamp-mini toulouse">
+          <div class="ico">🌸</div>
+          <div class="city">Toulouse</div>
+          <div class="date">10 — 11 · V</div>
+        </div>
+      </div>
+    </div>
+    <div class="trip-stats">
+      <div class="trip-stat">
+        <div class="ts-label">Total viaje</div>
+        <div class="ts-value">€1,208</div>
+        <div class="ts-sub">vuelos + hoteles + comidas</div>
+      </div>
+      <div class="trip-stat">
+        <div class="ts-label">€/persona/día</div>
+        <div class="ts-value">€100</div>
+        <div class="ts-sub">3 personas</div>
+      </div>
+      <div class="trip-stat">
+        <div class="ts-label">Saldo abierto</div>
+        <div class="ts-value" style="color:#DC2626;">€129.31</div>
+        <div class="ts-sub">E debe a Adri · Guayo ✓ pagó</div>
+      </div>
+      <div class="trip-stat">
+        <div class="ts-label">Highlights</div>
+        <div class="ts-value" style="font-size:13px; line-height:1.4;">🏰 Ciudadela · 🍽️ 4 cenas</div>
+      </div>
+    </div>
+    <div class="trip-foot">
+      <div class="trip-people"><strong>Ernesto</strong>, <strong>Adriana</strong> (invitada) &amp; <strong>Guayo</strong></div>
+      <span class="trip-link">Ver dashboard →</span>
+    </div>
+  </a>
+
+  <a class="trip amsterdam" href="amsterdam-2026-04.html">
+    <div class="trip-head">
+      <div class="trip-title-block">
+        <div class="month">Abril 2026</div>
+        <h2>Ámsterdam 🌷</h2>
+        <div class="dates">22 — 26 abril · 4 días</div>
+      </div>
+      <div class="stamps-row">
+        <div class="stamp-mini amsterdam">
+          <div class="ico">🌷</div>
+          <div class="city">Amsterdam</div>
+          <div class="date">22 — 26 · IV</div>
+        </div>
+      </div>
+    </div>
+    <div class="trip-stats">
+      <div class="trip-stat">
+        <div class="ts-label">Total viaje</div>
+        <div class="ts-value">€2,213</div>
+        <div class="ts-sub">incl. concierto Rosalía</div>
+      </div>
+      <div class="trip-stat">
+        <div class="ts-label">€/persona/día</div>
+        <div class="ts-value">€277</div>
+        <div class="ts-sub">2 personas</div>
+      </div>
+      <div class="trip-stat">
+        <div class="ts-label">Saldo final</div>
+        <div class="ts-value">€86.23</div>
+        <div class="ts-sub">E debe a Adri</div>
+      </div>
+      <div class="trip-stat">
+        <div class="ts-label">Highlights</div>
+        <div class="ts-value" style="font-size:13px; line-height:1.4;">🎵 Rosalía · 🌷 Tulipanes</div>
+      </div>
+    </div>
+    <div class="trip-foot">
+      <div class="trip-people"><strong>Ernesto</strong> &amp; <strong>Adriana</strong></div>
+      <span class="trip-link">Ver dashboard →</span>
+    </div>
+  </a>
+
+</div>
+
+<footer>
+  Trip expenses sandbox · ~/Desktop/Sandbox/trip-expenses/
+</footer>
+
+</div>
+</body>
+</html>

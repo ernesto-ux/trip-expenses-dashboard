@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Gastos Viaje Toulouse + Carcassonne — Mayo 2026</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Sora', sans-serif;
+    background: #F8F7FC;
+    color: #1A1A2E;
+    padding: 40px 20px;
+    line-height: 1.5;
+  }
+  .container { max-width: 1200px; margin: 0 auto; }
+  header {
+    background: linear-gradient(135deg, #7B61FF 0%, #5B41DF 100%);
+    color: white;
+    padding: 32px 36px;
+    border-radius: 16px;
+    margin-bottom: 32px;
+    box-shadow: 0 8px 24px rgba(123,97,255,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  header { position: relative; }
+  header h1 { font-size: 28px; font-weight: 700; margin-bottom: 6px; }
+  header p { font-size: 14px; opacity: 0.9; }
+  .header-stamps {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+  }
+  .stamp {
+    font-family: 'Sora', sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+    text-align: center;
+    padding: 10px 18px;
+    border: 2.5px solid currentColor;
+    border-radius: 12px;
+    letter-spacing: 1.8px;
+    position: relative;
+    background: rgba(255,255,255,0.96);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.18);
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1px;
+    min-width: 130px;
+  }
+  .stamp::before {
+    content: '';
+    position: absolute;
+    inset: 3px;
+    border: 1px dashed currentColor;
+    border-radius: 8px;
+    opacity: 0.6;
+    pointer-events: none;
+  }
+  .stamp-icon { font-size: 18px; line-height: 1; margin-bottom: 2px; filter: grayscale(0.15); }
+  .stamp-city { font-size: 14px; line-height: 1.1; }
+  .stamp-date { font-size: 9px; opacity: 0.75; letter-spacing: 2.5px; font-weight: 600; margin-top: 2px; }
+  .stamp-carcassonne { color: #B45309; }
+  .stamp-toulouse { color: #BE185D; }
+  .stamp-amsterdam { color: #C2410C; }
+  @media (max-width: 720px) {
+    .header-stamps { justify-content: center; }
+  }
+  .header-buttons { display: flex; gap: 10px; flex-wrap: wrap; }
+  .pill-btn {
+    background: rgba(255,255,255,0.18);
+    border: 1.5px solid rgba(255,255,255,0.4);
+    color: white;
+    font-family: 'Sora', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 10px 18px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .pill-btn:hover { background: rgba(255,255,255,0.3); transform: translateY(-1px); }
+  .pill-btn .circle {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 13px;
+  }
+  .pill-btn.btn-e .circle { background: #2563EB; color: white; }
+  .pill-btn.btn-a .circle { background: #C026D3; color: white; }
+  .pill-btn.btn-g .circle { background: #14B8A6; color: white; }
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(20, 15, 45, 0.6);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    padding: 20px;
+  }
+  .modal-overlay.show { display: flex; }
+  .modal {
+    background: white;
+    border-radius: 16px;
+    max-width: 540px;
+    width: 100%;
+    padding: 28px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  .modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .modal h3 { font-size: 20px; font-weight: 700; color: #1A1A2E; }
+  .modal .close {
+    background: #F0EDFF;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 16px;
+    color: #5B41DF;
+    font-weight: 600;
+  }
+  .modal .close:hover { background: #E5E1F5; }
+  .modal table { font-size: 14px; }
+  .modal .grand-total {
+    background: linear-gradient(135deg, #7B61FF 0%, #5B41DF 100%);
+    color: white;
+    padding: 16px 20px;
+    border-radius: 12px;
+    margin-top: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .modal .grand-total .label { font-size: 13px; opacity: 0.9; }
+  .modal .grand-total .val { font-size: 24px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .section {
+    background: white;
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  }
+  .section h2 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #7B61FF;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #F0EDFF;
+  }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th {
+    text-align: left;
+    padding: 10px 12px;
+    background: #F0EDFF;
+    font-weight: 600;
+    color: #5B41DF;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+  td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #F4F2F9;
+    vertical-align: middle;
+  }
+  tr:last-child td { border-bottom: none; }
+  .num { text-align: right; font-variant-numeric: tabular-nums; font-weight: 500; }
+  .total-row td {
+    background: #FAFAFC;
+    font-weight: 600;
+    border-top: 2px solid #7B61FF;
+  }
+  .badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .badge-e { background: #E8F1FF; color: #2563EB; }
+  .badge-a { background: #FFE8F5; color: #C026D3; }
+  .badge-g { background: #E0F7F4; color: #0D9488; }
+  .badge-no { background: #FFF1E0; color: #B45309; }
+  .cat {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 500;
+    background: #F0EDFF;
+    color: #5B41DF;
+    white-space: nowrap;
+  }
+  .summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+  .stat {
+    background: white;
+    padding: 18px 16px;
+    border-radius: 12px;
+    border-left: 4px solid #7B61FF;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  }
+  .stat.highlight {
+    background: linear-gradient(135deg, #7B61FF 0%, #5B41DF 100%);
+    border-left: none;
+    color: white;
+  }
+  .stat-label { font-size: 10px; text-transform: uppercase; color: #6B6B85; letter-spacing: 0.5px; margin-bottom: 6px; }
+  .stat.highlight .stat-label { color: rgba(255,255,255,0.85); }
+  .stat-value { font-size: 22px; font-weight: 700; color: #1A1A2E; font-variant-numeric: tabular-nums; }
+  .stat.highlight .stat-value { color: white; }
+  .stat-sub { font-size: 11px; color: #6B6B85; margin-top: 4px; }
+  .stat.highlight .stat-sub { color: rgba(255,255,255,0.85); }
+  .balance-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-bottom: 24px; }
+  .balance-box {
+    background: linear-gradient(135deg, #FFF8E1 0%, #FFE7B0 100%);
+    border-left: 5px solid #F59E0B;
+    padding: 20px 24px;
+    border-radius: 12px;
+  }
+  .balance-box.teal {
+    background: linear-gradient(135deg, #E0F7F4 0%, #B8EBE3 100%);
+    border-left-color: #14B8A6;
+  }
+  .balance-box h3 { font-size: 16px; color: #92400E; margin-bottom: 8px; }
+  .balance-box.teal h3 { color: #0F766E; }
+  .balance-box .amount { font-size: 28px; font-weight: 700; color: #92400E; font-variant-numeric: tabular-nums; }
+  .balance-box.teal .amount { color: #0F766E; }
+  .balance-box .who { font-size: 14px; color: #78350F; margin-top: 4px; }
+  .balance-box.teal .who { color: #115E59; }
+  .props {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
+  }
+  .prop-card {
+    background: #FAFAFC;
+    padding: 14px 16px;
+    border-radius: 10px;
+    border: 1px solid #F0EDFF;
+  }
+  .prop-card .name { font-size: 12px; color: #6B6B85; font-weight: 500; }
+  .prop-card .val { font-size: 18px; font-weight: 700; color: #1A1A2E; margin: 4px 0; font-variant-numeric: tabular-nums; }
+  .prop-card .pct { font-size: 11px; color: #7B61FF; font-weight: 600; }
+  .bar { height: 6px; background: #F0EDFF; border-radius: 3px; margin-top: 6px; overflow: hidden; }
+  .bar-fill { height: 100%; background: linear-gradient(90deg, #7B61FF, #C026D3); border-radius: 3px; }
+  .filters {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .filters label { font-size: 12px; color: #6B6B85; font-weight: 500; margin-right: 4px; }
+  .filters select {
+    font-family: 'Sora', sans-serif;
+    padding: 8px 12px;
+    border: 1px solid #E5E1F5;
+    border-radius: 8px;
+    background: white;
+    font-size: 13px;
+    color: #1A1A2E;
+    cursor: pointer;
+  }
+  .filters select:focus { outline: none; border-color: #7B61FF; }
+  .filters button {
+    font-family: 'Sora', sans-serif;
+    padding: 8px 14px;
+    border: none;
+    border-radius: 8px;
+    background: #F0EDFF;
+    color: #5B41DF;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  .filters button:hover { background: #E5E1F5; }
+  .filtered-summary {
+    background: #F0EDFF;
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    font-size: 13px;
+    color: #5B41DF;
+    font-weight: 500;
+  }
+  .day-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 14px;
+  }
+  .day-card.preview {
+    border-left-color: #C026D3;
+    background: linear-gradient(135deg, #FAFAFC 0%, #F9F2FC 100%);
+  }
+  .day-card.preview .day-amount { color: #C026D3; }
+  .day-card {
+    background: #FAFAFC;
+    padding: 16px;
+    border-radius: 10px;
+    border-left: 4px solid #7B61FF;
+    cursor: pointer;
+    transition: transform 0.15s;
+  }
+  .day-card:hover { transform: translateY(-2px); }
+  .day-card .day-name { font-size: 13px; color: #6B6B85; font-weight: 500; }
+  .day-card .day-date { font-size: 14px; color: #1A1A2E; font-weight: 600; margin: 4px 0; }
+  .day-card .day-amount { font-size: 22px; color: #7B61FF; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .day-card .day-count { font-size: 11px; color: #6B6B85; margin-top: 4px; }
+  .row-hidden { display: none !important; }
+  .review-flag { color: #B45309; font-weight: 600; font-size: 11px; }
+  .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .table-wrap table { min-width: 720px; }
+  @media (max-width: 640px) {
+    body { padding: 24px 12px; }
+    .container { padding: 0; }
+    .section { padding: 18px 16px; }
+    header { padding: 24px 20px; }
+    header h1 { font-size: 22px; }
+    .stat-value { font-size: 18px; }
+    .day-card .day-amount { font-size: 18px; }
+  }
+</style>
+</head>
+<body>
+<div id="pin-gate" style="position:fixed; inset:0; background:linear-gradient(135deg, #7B61FF 0%, #5B41DF 100%); display:flex; align-items:center; justify-content:center; z-index:99999; font-family:'Sora', system-ui, sans-serif;">
+  <div style="background:white; padding:40px 36px; border-radius:18px; box-shadow:0 20px 50px rgba(0,0,0,0.3); text-align:center; max-width:340px; width:90%;">
+    <div style="font-size:36px; margin-bottom:14px;">🔒</div>
+    <div style="font-size:11px; color:#6B6B85; letter-spacing:2.5px; text-transform:uppercase; margin-bottom:10px; font-weight:600;">Acceso privado</div>
+    <h2 style="font-size:20px; font-weight:700; color:#1A1A2E; margin-bottom:8px;">Introduce el PIN</h2>
+    <p style="font-size:13px; color:#6B6B85; margin-bottom:22px;">Información financiera personal</p>
+    <input type="password" id="pin-input" inputmode="numeric" maxlength="6" autocomplete="off" style="width:100%; padding:14px; font-size:24px; text-align:center; letter-spacing:8px; border:2px solid #E5E1F5; border-radius:10px; font-family:inherit; font-weight:600; color:#1A1A2E; outline:none; margin-bottom:14px;" />
+    <button id="pin-submit" style="width:100%; padding:13px; font-size:14px; background:linear-gradient(135deg, #7B61FF 0%, #5B41DF 100%); color:white; border:none; border-radius:10px; font-family:inherit; font-weight:600; cursor:pointer; letter-spacing:0.5px;">Entrar</button>
+    <div id="pin-error" style="font-size:12px; color:#DC2626; margin-top:10px; min-height:16px; font-weight:500;"></div>
+  </div>
+</div>
+<script>
+(function(){var PIN='75012',KEY='tripExpUnlocked',g=document.getElementById('pin-gate'),i=document.getElementById('pin-input'),s=document.getElementById('pin-submit'),e=document.getElementById('pin-error');if(sessionStorage.getItem(KEY)==='1'){g.remove();return;}document.documentElement.style.overflow='hidden';setTimeout(function(){i.focus();},80);function c(){if(i.value===PIN){sessionStorage.setItem(KEY,'1');g.style.transition='opacity 0.3s';g.style.opacity='0';document.documentElement.style.overflow='';setTimeout(function(){g.remove();},320);}else{e.textContent='PIN incorrecto';i.value='';i.style.borderColor='#DC2626';setTimeout(function(){i.style.borderColor='#E5E1F5';},1200);}}s.addEventListener('click',c);i.addEventListener('keydown',function(ev){if(ev.key==='Enter')c();});})();
+</script>
+<div class="container">
+
+<header>
+  <div>
+    <div class="header-stamps">
+      <div class="stamp stamp-carcassonne">
+        <div class="stamp-icon">🏰</div>
+        <div class="stamp-city">Carcassonne</div>
+        <div class="stamp-date">8 — 10 · V · 2026</div>
+      </div>
+      <div class="stamp stamp-toulouse">
+        <div class="stamp-icon">🌸</div>
+        <div class="stamp-city">Toulouse</div>
+        <div class="stamp-date">10 — 11 · V · 2026</div>
+      </div>
+    </div>
+    <h1>Viaje Toulouse + Carcassonne — Mayo 2026</h1>
+    <p>Resumen de gastos · Ernesto, Adriana &amp; Guayo · 8-11 mayo (4 días)</p>
+  </div>
+  <div class="header-buttons">
+    <button class="pill-btn btn-e" onclick="openModal('modal-e')"><span class="circle">E</span> Mis gastos</button>
+    <button class="pill-btn btn-a" onclick="openModal('modal-a')"><span class="circle">A</span> Adri</button>
+    <button class="pill-btn btn-g" onclick="openModal('modal-g')"><span class="circle">G</span> Guayo</button>
+  </div>
+</header>
+
+<div class="modal-overlay" id="modal-e" onclick="if(event.target===this)closeModal('modal-e')">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>👤 Mis gastos (Ernesto)</h3>
+      <button class="close" onclick="closeModal('modal-e')">✕</button>
+    </div>
+    <table>
+      <thead><tr><th>Fecha</th><th>Concepto</th><th class="num">Mi parte</th></tr></thead>
+      <tbody>
+        <tr><td colspan="3" style="background:#F0EDFF; color:#5B41DF; font-weight:600; padding:8px 12px;">Pre-viaje</td></tr>
+        <tr><td>pre-viaje</td><td>🛫 Transavia · Paris ↔ Toulouse · 2 pax sin maleta (E + A)</td><td class="num">€202.00</td></tr>
+
+        <tr><td colspan="3" style="background:#F0EDFF; color:#5B41DF; font-weight:600; padding:8px 12px;">Viernes 8 mai · Paris → Toulouse → Carcassonne</td></tr>
+        <tr><td>8 mai</td><td>🚖 Bolt · Rue de Cotte → Orly</td><td class="num">€12.50</td></tr>
+        <tr><td>8 mai · tarde</td><td>🚇 Tisséo · Toulouse (cargo posteado 02:06)</td><td class="num">€9.00</td></tr>
+        <tr><td>8 mai</td><td>🛒 Mtc · compra rápida</td><td class="num">€4.66</td></tr>
+        <tr><td>8 mai</td><td>🛒 Selecta · vending</td><td class="num">€2.50</td></tr>
+        <tr><td>8 mai</td><td>🛒 Selecta · vending</td><td class="num">€3.70</td></tr>
+        <tr><td>8 mai</td><td>🚽 2theloo</td><td class="num">€1.00</td></tr>
+        <tr><td>8 mai</td><td>🍔 McDonald's · gare Toulouse</td><td class="num">€10.30</td></tr>
+        <tr><td>8 mai</td><td>🚂 SNCF · Toulouse → Carcassonne</td><td class="num">€37.00</td></tr>
+        <tr><td>8 mai · 22:28</td><td>🍽️ Julia · cena libanesa <span style="color:#6B6B85;">(€67 − Guayo €20)</span></td><td class="num">€47.00</td></tr>
+        <tr><td>8-10 mai</td><td>🏨 Hotel Carcassonne · 2 noches <span style="color:#6B6B85;">(€300 − Guayo €100)</span></td><td class="num">€200.00</td></tr>
+
+        <tr><td colspan="3" style="background:#F0EDFF; color:#5B41DF; font-weight:600; padding:8px 12px;">Sábado 9 mai · Carcassonne (ciudadela)</td></tr>
+        <tr><td>9 mai</td><td>☕ O Deliz Cafe <span style="color:#6B6B85;">(€9.80 − Guayo €4.80)</span></td><td class="num">€5.00</td></tr>
+        <tr><td>9 mai</td><td>🏰 Château Comtal · entrada</td><td class="num">€38.00</td></tr>
+        <tr><td>9 mai</td><td>🏰 Château Comtal · adicional</td><td class="num">€13.90</td></tr>
+        <tr><td>9 mai</td><td>🍽️ Le Petit Marcou <span style="color:#6B6B85;">(€88.10 − Guayo €24.60)</span></td><td class="num">€63.50</td></tr>
+        <tr><td>9 mai</td><td>🛍️ Maison Pautard · souvenirs</td><td class="num">€9.00</td></tr>
+        <tr><td>9 mai</td><td>🛍️ Carrefour · souvenirs (1-2 super)</td><td class="num">€25.38</td></tr>
+        <tr><td>9 mai</td><td>🍽️ La Crêperie <span style="color:#6B6B85;">(€18.90 − Guayo €5)</span></td><td class="num">€13.90</td></tr>
+
+        <tr><td colspan="3" style="background:#F0EDFF; color:#5B41DF; font-weight:600; padding:8px 12px;">Domingo 10 mai · Carcassonne → Toulouse</td></tr>
+        <tr><td>10 mai</td><td>☕ Domitys · 2 cafés</td><td class="num">€3.00</td></tr>
+        <tr><td>10 mai</td><td>🍽️ Brasserie à 4 Temps <span style="color:#6B6B85;">(€89.60 − Guayo €33.80)</span></td><td class="num">€55.80</td></tr>
+        <tr><td>10 mai</td><td>🚂 SNCF · Carcassonne → Toulouse</td><td class="num">€37.00</td></tr>
+        <tr><td>10 mai</td><td>🍔 KFC</td><td class="num">€17.90</td></tr>
+
+        <tr><td colspan="3" style="background:#F0EDFF; color:#5B41DF; font-weight:600; padding:8px 12px;">Lunes 11 mai · Toulouse → Paris</td></tr>
+        <tr><td>11 mai</td><td>☕ Normal · café Toulouse</td><td class="num">€8.70</td></tr>
+        <tr><td>11 mai</td><td>🍽️ LE J'GO · restaurante Toulouse</td><td class="num">€56.00</td></tr>
+        <tr><td>11 mai</td><td>🚖 Bolt · Orly → Rue de Cotte (vuelta a casa)</td><td class="num">€13.90</td></tr>
+      </tbody>
+    </table>
+    <div class="grand-total">
+      <div class="label">Mi gasto neto (sin parte Guayo)</div>
+      <div class="val">€890.64</div>
+    </div>
+    <p class="note" style="font-size:12px; color:#6B6B85; margin-top:10px; font-style:italic;">Total desembolsado bruto: €1,078.84. Menos reembolso Guayo €188.20 = €890.64 neto. Faltaría además pagar a Adri €129.31 (Amex hotel + cash McDo).</p>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-a" onclick="if(event.target===this)closeModal('modal-a')">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>👤 Adriana</h3>
+      <button class="close" onclick="closeModal('modal-a')">✕</button>
+    </div>
+    <table>
+      <thead><tr><th>Fecha</th><th>Concepto</th><th class="num">Monto</th></tr></thead>
+      <tbody>
+        <tr><td>10 mai</td><td>🍔 McDonald's + fichas (Adri pagó en efectivo)</td><td class="num">€12.40</td></tr>
+        <tr><td>10-11 mai</td><td>🏨 Hotel Mercure Toulouse · 1 noche (cargado a Amex Adri)</td><td class="num">€116.91</td></tr>
+      </tbody>
+    </table>
+    <div class="grand-total">
+      <div class="label">Total que Ernesto debe a Adri</div>
+      <div class="val">€129.31</div>
+    </div>
+    <p class="note" style="font-size:12px; color:#6B6B85; margin-top:10px; font-style:italic;">Adri no aporta a este viaje (Ernesto invita). Solo se le reembolsa lo que pagó por adelantado (Amex + cash McDonald's).</p>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-g" onclick="if(event.target===this)closeModal('modal-g')">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>👤 Guayo</h3>
+      <button class="close" onclick="closeModal('modal-g')">✕</button>
+    </div>
+    <table>
+      <thead><tr><th>Fecha</th><th>Concepto</th><th class="num">Monto</th></tr></thead>
+      <tbody>
+        <tr><td>8 mai</td><td>🏨 Hotel Carcassonne (parte Guayo del total €300)</td><td class="num">€100.00</td></tr>
+        <tr><td>8 mai · 22:28</td><td>🍽️ Julia · cena libanesa</td><td class="num">€20.00</td></tr>
+        <tr><td>9 mai · 11:42</td><td>☕ O Deliz Cafe</td><td class="num">€4.80</td></tr>
+        <tr><td>9 mai · 15:42</td><td>🍽️ Le Petit Marcou (menu + café)</td><td class="num">€24.60</td></tr>
+        <tr><td>9 mai</td><td>🍽️ La Crêperie</td><td class="num">€5.00</td></tr>
+        <tr><td>10 mai · 14:52</td><td>🍽️ Brasserie à 4 Temps (plato + soda)</td><td class="num">€33.80</td></tr>
+      </tbody>
+    </table>
+    <div class="grand-total" style="background: linear-gradient(135deg, #16A34A 0%, #15803D 100%);">
+      <div class="label">✓ PAGADO · 2026-05-12</div>
+      <div class="val">€188.20</div>
+    </div>
+  </div>
+</div>
+
+<div class="summary">
+  <div class="stat highlight"><div class="stat-label">Total viaje</div><div class="stat-value">€1,208.15</div><div class="stat-sub">8-11 mai (4 días) · 3 viajeros</div></div>
+  <div class="stat"><div class="stat-label">Desembolsó Ernesto</div><div class="stat-value">€1,078.84</div><div class="stat-sub">25 transacciones</div></div>
+  <div class="stat"><div class="stat-label">Adri adelantó</div><div class="stat-value">€129.31</div><div class="stat-sub">Amex hotel + cash McDo</div></div>
+  <div class="stat"><div class="stat-label">Guayo debe a E</div><div class="stat-value">€188.20</div><div class="stat-sub">6 conceptos</div></div>
+  <div class="stat"><div class="stat-label">Ernesto debe a A</div><div class="stat-value">€129.31</div><div class="stat-sub">Reembolso adelantos</div></div>
+</div>
+
+<div class="balance-row">
+  <div class="balance-box teal" style="background: linear-gradient(135deg, #DCFCE7 0%, #BBF7D0 100%); border-left-color: #16A34A;">
+    <h3 style="color:#15803D;">Saldo Guayo · ✓ PAGADO</h3>
+    <div class="amount" style="color:#15803D; text-decoration: line-through; opacity:0.6;">€188.20</div>
+    <div class="who" style="color:#166534;">Recibido el 2026-05-12</div>
+    <div style="font-size:11px; color:#15803D; font-style:italic; margin-top:8px; opacity:0.75;">…pero perdió en SKYJO 🎴😏</div>
+  </div>
+  <div class="balance-box">
+    <h3>Saldo Adri</h3>
+    <div class="amount">€129.31</div>
+    <div class="who">Ernesto debe a Adri (reembolso Amex + McDo)</div>
+  </div>
+</div>
+
+<div class="section">
+  <h2>Gasto por día</h2>
+  <div class="day-grid">
+    <div class="day-card preview" onclick="setDayFilter('pre-viaje')">
+      <div class="day-name">Pre-viaje</div>
+      <div class="day-date">Vuelos</div>
+      <div class="day-amount">€202.00</div>
+      <div class="day-count">Transavia E + A · 1 gasto</div>
+    </div>
+    <div class="day-card" onclick="setDayFilter('8 mai')">
+      <div class="day-name">Viernes</div>
+      <div class="day-date">8 mai · Paris → Carcassonne</div>
+      <div class="day-amount">€447.66</div>
+      <div class="day-count">Bolt + traslado + Julia + Hotel · 10 gastos</div>
+    </div>
+    <div class="day-card" onclick="setDayFilter('9 mai')">
+      <div class="day-name">Sábado</div>
+      <div class="day-date">9 mai · Carcassonne</div>
+      <div class="day-amount">€203.08</div>
+      <div class="day-count">Ciudadela + comidas + souvenirs · 7 gastos</div>
+    </div>
+    <div class="day-card" onclick="setDayFilter('10 mai')">
+      <div class="day-name">Domingo</div>
+      <div class="day-date">10 mai · Carcassonne → Toulouse</div>
+      <div class="day-amount">€276.81</div>
+      <div class="day-count">Brasserie + tren + Mercure + KFC · 6 gastos</div>
+    </div>
+    <div class="day-card" onclick="setDayFilter('11 mai')">
+      <div class="day-name">Lunes</div>
+      <div class="day-date">11 mai · Toulouse → Paris</div>
+      <div class="day-amount">€78.60</div>
+      <div class="day-count">Normal + LE J'GO + Bolt regreso · 3 gastos</div>
+    </div>
+  </div>
+  <p class="note" style="font-size:12px; color:#6B6B85; margin-top:10px; font-style:italic;">Total con hoteles incluidos (Carcassonne €300 y Mercure Toulouse €116,91).</p>
+</div>
+
+<div class="section">
+  <h2>Proporciones del viaje completo</h2>
+  <p style="font-size:13px; color:#6B6B85; margin-bottom:16px;">Total viaje: <strong>€1.208,15</strong> — desglose por categoría sobre el gasto bruto (E + Adri).</p>
+  <div class="props">
+    <div class="prop-card">
+      <div class="name">🏨 Hoteles (3 noches: 2 Carcassonne + 1 Toulouse)</div>
+      <div class="val">€416.91</div>
+      <div class="pct">34.5%</div>
+      <div class="bar"><div class="bar-fill" style="width:34.5%"></div></div>
+    </div>
+    <div class="prop-card">
+      <div class="name">🍽️ Alimentación (restaurantes + snacks)</div>
+      <div class="val">€392.56</div>
+      <div class="pct">32.5%</div>
+      <div class="bar"><div class="bar-fill" style="width:32.5%"></div></div>
+    </div>
+    <div class="prop-card">
+      <div class="name">🛫 Vuelos Transavia (2 pax)</div>
+      <div class="val">€202.00</div>
+      <div class="pct">16.7%</div>
+      <div class="bar"><div class="bar-fill" style="width:16.7%"></div></div>
+    </div>
+    <div class="prop-card">
+      <div class="name">🚂🚖🚇 Transporte total</div>
+      <div class="val">€109.40</div>
+      <div class="pct">9.1%</div>
+      <div class="bar"><div class="bar-fill" style="width:9.1%"></div></div>
+    </div>
+    <div class="prop-card">
+      <div class="name">🏰 Château Comtal (Carcassonne)</div>
+      <div class="val">€51.90</div>
+      <div class="pct">4.3%</div>
+      <div class="bar"><div class="bar-fill" style="width:4.3%"></div></div>
+    </div>
+    <div class="prop-card">
+      <div class="name">🛍️ Souvenirs</div>
+      <div class="val">€34.38</div>
+      <div class="pct">2.8%</div>
+      <div class="bar"><div class="bar-fill" style="width:2.8%"></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h2>Detalle por categoría</h2>
+  <table>
+    <thead><tr><th>Categoría</th><th>Componentes</th><th class="num">Monto</th><th class="num">% del total</th></tr></thead>
+    <tbody>
+      <tr><td>🏨 Hoteles</td><td>Hotel Carcassonne €300 (2 noches, 8-10 mai) + Mercure Toulouse €116.91 (1 noche, 10-11 mai)</td><td class="num">€416.91</td><td class="num">34.5%</td></tr>
+      <tr><td>🍽️ Alimentación</td><td>Julia 67 · Le Petit Marcou 88.10 · Brasserie 89.60 · LE J'GO 56 · La Crêperie 18.90 · KFC 17.90 · McDonald's (10.30 + 12.40) · O Deliz 9.80 · Normal 8.70 · Mtc 4.66 · Selecta (2.50 + 3.70) · Domitys 3</td><td class="num">€392.56</td><td class="num">32.5%</td></tr>
+      <tr><td>🛫 Vuelos</td><td>Transavia Paris ↔ Toulouse · 2 pax sin maleta</td><td class="num">€202.00</td><td class="num">16.7%</td></tr>
+      <tr><td>🚂 Trenes SNCF</td><td>Toulouse → Carcassonne (€37) + Carcassonne → Toulouse (€37)</td><td class="num">€74.00</td><td class="num">6.1%</td></tr>
+      <tr><td>🏰 Château Comtal</td><td>Entrada principal €38 + adicional €13.90</td><td class="num">€51.90</td><td class="num">4.3%</td></tr>
+      <tr><td>🛍️ Souvenirs</td><td>Carrefour 25.38 + Maison Pautard 9</td><td class="num">€34.38</td><td class="num">2.8%</td></tr>
+      <tr><td>🚖 Bolts</td><td>Cotte → Orly (€12.50) + Orly → Cotte (€13.90)</td><td class="num">€26.40</td><td class="num">2.2%</td></tr>
+      <tr><td>🚇 Transporte Toulouse</td><td>Tisséo (8 mai tarde)</td><td class="num">€9.00</td><td class="num">0.7%</td></tr>
+      <tr><td>🚽 Otro</td><td>2theloo</td><td class="num">€1.00</td><td class="num">0.1%</td></tr>
+      <tr class="total-row"><td colspan="2">Total viaje</td><td class="num">€1,208.15</td><td class="num">100%</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="section">
+  <h2>Detalle de gastos (con filtros)</h2>
+  <div class="filters">
+    <label>Día:</label>
+    <select id="filter-day" onchange="applyFilters()">
+      <option value="">Todos</option>
+      <option value="pre-viaje">Pre-viaje</option>
+      <option value="8 mai">Vie 8</option>
+      <option value="9 mai">Sáb 9</option>
+      <option value="10 mai">Dom 10</option>
+      <option value="11 mai">Lun 11</option>
+    </select>
+    <label>Pagó:</label>
+    <select id="filter-who" onchange="applyFilters()">
+      <option value="">Todos</option>
+      <option value="E">Ernesto</option>
+      <option value="A">Adriana</option>
+    </select>
+    <label>Guayo:</label>
+    <select id="filter-guayo" onchange="applyFilters()">
+      <option value="">Todos</option>
+      <option value="si">Solo con parte Guayo</option>
+    </select>
+    <button onclick="resetFilters()">Limpiar</button>
+  </div>
+  <div class="filtered-summary" id="filter-summary">Total filtrado: €1,208.15 · 27 gastos</div>
+  <div class="table-wrap">
+  <table id="expense-table">
+    <thead>
+      <tr>
+        <th>Fecha</th>
+        <th>Pagó</th>
+        <th>Categoría</th>
+        <th>Concepto</th>
+        <th>Detalle</th>
+        <th class="num">Parte Guayo</th>
+        <th class="num">Monto</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Pre-viaje -->
+      <tr data-day="pre-viaje" data-who="E" data-guayo="no" data-amount="202.00">
+        <td>pre-viaje</td><td><span class="badge badge-e">E</span></td><td><span class="cat">🛫 Vuelos</span></td><td>Transavia</td><td>Paris ↔ Toulouse · 2 pax sin maleta (E + A)</td><td class="num">—</td><td class="num">€202.00</td>
+      </tr>
+
+      <!-- 8 mai · viernes (Paris → Toulouse → Carcassonne) -->
+      <tr data-day="8 mai" data-who="E" data-guayo="no" data-amount="12.50">
+        <td>8 mai</td><td><span class="badge badge-e">E</span></td><td><span class="cat">🚖 Bolt</span></td><td>Bolt</td><td>Rue de Cotte → Orly</td><td class="num">—</td><td class="num">€12.50</td>
+      </tr>
+      <tr data-day="8 mai" data-who="E" data-guayo="no" data-amount="9.00">
+        <td>8 mai · tarde</td><td><span class="badge badge-e">E</span></td><td><span class="cat">🚇 Transp</span></td><td>Tisséo</td><td>Toulouse (cargo posteado 02:06)</td><td class="num">—</td><td class="num">€9.00</td>
+      </tr>
+      <tr data-day="8 mai" data-who="E" data-guayo="no" data-amount="4.66">
+        <td>8 mai</td><td><span class="badge badge-e">E</span></td><td><span class="cat">🛒 Snack</span></td><td>Mtc</td><td>Compra rápida</td><td class="num">—</td><td class="num">€4.66</td>
+      </tr>
+      <tr data-day="8 mai" data-who="E" data-guayo="no" data-amount="2.50">
+        <td>8 mai</td><td><span class="badge badge-e">E</span></td><td><span class="cat">🛒 Snack</span></td><td>Selecta</td><td>Vending</td><td class="num">—</td><td class="num">€2.50</td>
+      </tr>
+      <tr data-day="8 mai" data-who="E" data-guayo="no" data-amount="3.70">
+        <td>8 mai</td><td><span class="badge badge-e">E</span></td><td><span class="cat">🛒 Snack</span></td><td>Selecta</td><td>Vending</td><td class="num">—</td><td class="num">€3.70</td>
+      </tr>
+      <tr data-day="8 mai" data-who="E" data-guayo="no" data-amount="1.00">
+        <td>8 mai</td><td><span class="badge badge-e">E</span></td><td><span class="cat">🚽 Otro</span></td><td>2theloo</td><td>Baño</td><td class="num">—</td><td class="num">€1.00</td>
+      </tr>
+      <tr data-day="8 mai" data-who="E" data-guayo="no" data-amount="10.30">
+        <td>8 mai</td><td><span class="badge badge-e">E</span></td><td><span class="cat">🍔 Alim</span></td><td>McDonald's</td><td>Gare Toulouse</td><td class="num">—</td><td class="num">€10.30</td>
+      </tr>
+      <tr data-day="8 mai" data-who="E" data-guayo="no" data-amount="37.00">
+        <td>8 mai</td><td><span class="badge badge-e">E</span></td><td><span class="cat">🚂 Tren</span></td><td>SNCF</td><td>Toulouse → Carcassonne</td><td class="num">—</td><td class="num">€37.00</td>
+      </tr>
+      <tr data-day="8 mai" data-who="E" data-guayo="si" data-amount="67.00">
+        <td>8 mai · 22:28</td><td><span class="badge badge-e">E</span></td><td><span class="cat">🍽️ Alim</span></td><td>Julia</td><td>Cena libanesa (Guayo: shawarma + bebida + entrée)</td><td class="num">€20.00</td><td class="num">€67.00</td>
+      </tr>
+      <tr data-day="8 mai" data-who="E" data-guayo="si" data-amount="300.00">
+        <td>8 mai</td><td><span class="badge badge-e">E</span></td><td><span class="cat">🏨 Hotel</span></td><td>Hotel Carcassonne</td><td>Total €300 (E: €200 · Guayo: €100 · Adri invitada)</td><td class="num">€100.00</td><td class="num">€300.00</td>
+      </tr>
+
+      <!-- 9 mai · sábado (Carcassonne ciudadela) -->
+      <tr data-day="9 mai" data-who="E" data-guayo="si" data-amount="9.80">
+        <td>9 mai</td><td><span class="badge badge-e">E</span></td><td><span class="cat">☕ Café</span></td><td>O Deliz Cafe</td><td>Café mañana (Guayo: €4.80)</td><td class="num">€4.80</td><td class="num">€9.80</td>
+      </tr>
+      <tr data-day="9 mai" data-who="E" data-guayo="no" data-amount="38.00">
+        <td>9 mai</td><td><span class="badge badge-e">E</span></td><td><span class="cat">🏰 Castillo</span></td><td>Château Comtal</td><td>Entradas Carcassonne</td><td class="num">—</td><td class="num">€38.00</td>
+      </tr>
+      <tr data-day="9 mai" data-who="E" data-guayo="no" data-amount="13.90">
+        <td>9 mai</td><td><span class="badge badge-e">E</span></td><td><span class="cat">🏰 Castillo</span></td><td>Château Comtal</td><td>Adicional</td><td class="num">—</td><td class="num">€13.90</td>
+      </tr>
+      <tr data-day="9 mai" data-who="E" data-guayo="si" data-amount="88.10">
+        <td>9 mai</td><td><span class="badge badge-e">E</span></td><td><span class="cat">🍽️ Alim</span></td><td>Le Petit Marcou</td><td>Comida (Guayo: menu €21.90 + café €2.70)</td><td class="num">€24.60</td><td class="num">€88.10</td>
+      </tr>
+      <tr data-day="9 mai" data-who="E" data-guayo="no" data-amount="9.00">
+        <td>9 mai</td><td><span class="badge badge-e">E</span></td><td><span class="cat">🛍️ Souvenirs</span></td><td>Maison Pautard</td><td>Souvenirs Carcassonne</td><td class="num">—</td><td class="num">€9.00</td>
+      </tr>
+      <tr data-day="9 mai" data-who="E" data-guayo="no" data-amount="25.38">
+        <td>9 mai</td><td><span class="badge badge-e">E</span></td><td><span class="cat">🛍️ Souvenirs</span></td><td>Carrefour</td><td>Souvenirs (1-2 items super)</td><td class="num">—</td><td class="num">€25.38</td>
+      </tr>
+      <tr data-day="9 mai" data-who="E" data-guayo="si" data-amount="18.90">
+        <td>9 mai</td><td><span class="badge badge-e">E</span></td><td><span class="cat">🍽️ Alim</span></td><td>La Crêperie</td><td>Comida (Guayo: €5)</td><td class="num">€5.00</td><td class="num">€18.90</td>
+      </tr>
+
+      <!-- 10 mai · domingo (Carcassonne → Toulouse) -->
+      <tr data-day="10 mai" data-who="E" data-guayo="no" data-amount="3.00">
+        <td>10 mai</td><td><span class="badge badge-e">E</span></td><td><span class="cat">☕ Café</span></td><td>Domitys</td><td>2 cafés</td><td class="num">—</td><td class="num">€3.00</td>
+      </tr>
+      <tr data-day="10 mai" data-who="E" data-guayo="si" data-amount="89.60">
+        <td>10 mai</td><td><span class="badge badge-e">E</span></td><td><span class="cat">🍽️ Alim</span></td><td>Brasserie à 4 Temps</td><td>Comida (Guayo: plato €29 + soda €4.80)</td><td class="num">€33.80</td><td class="num">€89.60</td>
+      </tr>
+      <tr data-day="10 mai" data-who="E" data-guayo="no" data-amount="37.00">
+        <td>10 mai</td><td><span class="badge badge-e">E</span></td><td><span class="cat">🚂 Tren</span></td><td>SNCF</td><td>Carcassonne → Toulouse</td><td class="num">—</td><td class="num">€37.00</td>
+      </tr>
+      <tr data-day="10 mai" data-who="A" data-guayo="no" data-amount="116.91">
+        <td>10 mai</td><td><span class="badge badge-a">A</span></td><td><span class="cat">🏨 Hotel</span></td><td>Mercure Toulouse</td><td>Cargado a Amex Adri · E reembolsa €116.91</td><td class="num">—</td><td class="num">€116.91</td>
+      </tr>
+      <tr data-day="10 mai" data-who="A" data-guayo="no" data-amount="12.40">
+        <td>10 mai</td><td><span class="badge badge-a">A</span></td><td><span class="cat">🍔 Alim</span></td><td>McDonald's + fichas</td><td>Adri pagó cash · E debe €12.40</td><td class="num">—</td><td class="num">€12.40</td>
+      </tr>
+      <tr data-day="10 mai" data-who="E" data-guayo="no" data-amount="17.90">
+        <td>10 mai</td><td><span class="badge badge-e">E</span></td><td><span class="cat">🍔 Alim</span></td><td>KFC</td><td>Comida</td><td class="num">—</td><td class="num">€17.90</td>
+      </tr>
+
+      <!-- 11 mai · lunes (Toulouse → Paris) -->
+      <tr data-day="11 mai" data-who="E" data-guayo="no" data-amount="8.70">
+        <td>11 mai</td><td><span class="badge badge-e">E</span></td><td><span class="cat">☕ Café</span></td><td>Normal</td><td>Café Toulouse</td><td class="num">—</td><td class="num">€8.70</td>
+      </tr>
+      <tr data-day="11 mai" data-who="E" data-guayo="no" data-amount="56.00">
+        <td>11 mai</td><td><span class="badge badge-e">E</span></td><td><span class="cat">🍽️ Alim</span></td><td>LE J'GO</td><td>Restaurante Toulouse</td><td class="num">—</td><td class="num">€56.00</td>
+      </tr>
+      <tr data-day="11 mai" data-who="E" data-guayo="no" data-amount="13.90">
+        <td>11 mai</td><td><span class="badge badge-e">E</span></td><td><span class="cat">🚖 Bolt</span></td><td>Bolt</td><td>Orly → Rue de Cotte (vuelta a casa)</td><td class="num">—</td><td class="num">€13.90</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="note" style="font-size:12px; color:#6B6B85; margin-top:10px; font-style:italic;">
+    <strong>Excluidos del viaje:</strong> Cofidis €150 (préstamo personal), Joint→Personal &amp; Imprevistos (transferencias internas), Adriana Hasbun -€2 (envío pequeño).
+  </p>
+</div>
+
+<div class="section">
+  <h2>Cálculo de saldos</h2>
+  <table>
+    <thead><tr><th>Saldo</th><th>Detalle</th><th class="num">Monto</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>Guayo → Ernesto</strong></td>
+        <td>Hotel Carcassonne €100 (parte de €300) + Julia €20 + O Deliz €4.80 + Le Petit Marcou €24.60 + La Crêperie €5 + Brasserie 4 Temps €33.80</td>
+        <td class="num"><strong>€188.20</strong></td>
+      </tr>
+      <tr>
+        <td><strong>Ernesto → Adriana</strong></td>
+        <td>McDonald's €12.40 (cash Adri) + Hotel Mercure Toulouse €116.91 (Amex Adri)</td>
+        <td class="num"><strong>€129.31</strong></td>
+      </tr>
+      <tr class="total-row">
+        <td colspan="2">Saldo neto Ernesto (cobra Guayo, paga Adri)</td>
+        <td class="num">+€58.89</td>
+      </tr>
+    </tbody>
+  </table>
+  <p class="note" style="font-size:12px; color:#6B6B85; margin-top:10px; font-style:italic;">Adri viaja invitada por Ernesto. No aporta su parte. Solo se le devuelve lo que adelantó (Amex hotel + cash McDo).</p>
+</div>
+
+<div class="section">
+  <h2>Notas y datos del viaje</h2>
+  <ul style="font-size:13px; color:#1A1A2E; line-height:1.8; padding-left:20px;">
+    <li><strong>Duración:</strong> 4 días (8-11 mai) · 3 viajeros (Ernesto + Adri invitada + Guayo).</li>
+    <li><strong>Vuelos Transavia €202:</strong> 2 pax round-trip Paris ↔ Toulouse sin maleta (E + A). Compra pre-viaje.</li>
+    <li><strong>Hotel Carcassonne €300:</strong> 2 noches (8-10 mai). Ernesto €200 + Guayo €100. Adri invitada.</li>
+    <li><strong>Hotel Mercure Toulouse €116.91:</strong> 1 noche (10-11 mai). Total cargado al Amex de Adri, Ernesto reembolsa íntegro.</li>
+    <li><strong>Tisséo "02:06":</strong> cargo realmente usado el 8 mai tarde (posteado madrugada del 9).</li>
+    <li><strong>McDonald's:</strong> dos eventos. €10.30 (8 mai, tarjeta E, gare Toulouse) y €12.40 (10 mai, cash Adri + fichas) que E reembolsa.</li>
+    <li><strong>Carrefour 9 mai:</strong> categoría "souvenirs" — solo 1-2 items eran supermercado, el resto regalos/recuerdos.</li>
+    <li><strong>Bolts:</strong> Rue de Cotte → Orly (€12.50, 8 mai ida) + Orly → Rue de Cotte (€13.90, 11 mai regreso).</li>
+    <li><strong>Domitys 10 mai:</strong> 2 cafés (€3 total).</li>
+  </ul>
+</div>
+
+</div>
+
+<script>
+function applyFilters() {
+  const day = document.getElementById('filter-day').value;
+  const who = document.getElementById('filter-who').value;
+  const guayo = document.getElementById('filter-guayo').value;
+  const rows = document.querySelectorAll('#expense-table tbody tr');
+  let total = 0;
+  let count = 0;
+  rows.forEach(row => {
+    const matchDay = !day || row.dataset.day === day;
+    const matchWho = !who || row.dataset.who === who;
+    const matchGuayo = !guayo || row.dataset.guayo === guayo;
+    if (matchDay && matchWho && matchGuayo) {
+      row.classList.remove('row-hidden');
+      total += parseFloat(row.dataset.amount);
+      count++;
+    } else {
+      row.classList.add('row-hidden');
+    }
+  });
+  document.getElementById('filter-summary').textContent =
+    `Total filtrado: €${total.toFixed(2)} · ${count} gasto${count !== 1 ? 's' : ''}`;
+}
+
+function resetFilters() {
+  document.getElementById('filter-day').value = '';
+  document.getElementById('filter-who').value = '';
+  document.getElementById('filter-guayo').value = '';
+  applyFilters();
+}
+
+function setDayFilter(day) {
+  document.getElementById('filter-day').value = day;
+  applyFilters();
+  document.getElementById('expense-table').scrollIntoView({behavior: 'smooth', block: 'start'});
+}
+
+function openModal(id) { document.getElementById(id).classList.add('show'); }
+function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.modal-overlay.show').forEach(m => m.classList.remove('show'));
+  }
+});
+</script>
+
+</body>
+</html>

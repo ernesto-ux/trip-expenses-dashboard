@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Gastos Viaje Ámsterdam — Abril 2026</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Sora', sans-serif;
+    background: #F8F7FC;
+    color: #1A1A2E;
+    padding: 40px 20px;
+    line-height: 1.5;
+  }
+  .container { max-width: 1200px; margin: 0 auto; }
+  header {
+    background: linear-gradient(135deg, #7B61FF 0%, #5B41DF 100%);
+    color: white;
+    padding: 32px 36px;
+    border-radius: 16px;
+    margin-bottom: 32px;
+    box-shadow: 0 8px 24px rgba(123,97,255,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+  }
+  header h1 { font-size: 28px; font-weight: 700; margin-bottom: 6px; }
+  header p { font-size: 14px; opacity: 0.9; }
+  .header-buttons { display: flex; gap: 10px; }
+  .pill-btn {
+    background: rgba(255,255,255,0.18);
+    border: 1.5px solid rgba(255,255,255,0.4);
+    color: white;
+    font-family: 'Sora', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 10px 18px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .pill-btn:hover { background: rgba(255,255,255,0.3); transform: translateY(-1px); }
+  .pill-btn .circle {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 13px;
+  }
+  .pill-btn.btn-e .circle { background: #2563EB; color: white; }
+  .pill-btn.btn-a .circle { background: #C026D3; color: white; }
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(20, 15, 45, 0.6);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    padding: 20px;
+  }
+  .modal-overlay.show { display: flex; }
+  .modal {
+    background: white;
+    border-radius: 16px;
+    max-width: 540px;
+    width: 100%;
+    padding: 28px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  .modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .modal h3 { font-size: 20px; font-weight: 700; color: #1A1A2E; }
+  .modal .close {
+    background: #F0EDFF;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 16px;
+    color: #5B41DF;
+    font-weight: 600;
+  }
+  .modal .close:hover { background: #E5E1F5; }
+  .modal table { font-size: 14px; }
+  .modal .grand-total {
+    background: linear-gradient(135deg, #7B61FF 0%, #5B41DF 100%);
+    color: white;
+    padding: 16px 20px;
+    border-radius: 12px;
+    margin-top: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .modal .grand-total .label { font-size: 13px; opacity: 0.9; }
+  .modal .grand-total .val { font-size: 24px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .section {
+    background: white;
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  }
+  .section h2 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #7B61FF;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #F0EDFF;
+  }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th {
+    text-align: left;
+    padding: 10px 12px;
+    background: #F0EDFF;
+    font-weight: 600;
+    color: #5B41DF;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+  td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #F4F2F9;
+    vertical-align: middle;
+  }
+  tr:last-child td { border-bottom: none; }
+  .num { text-align: right; font-variant-numeric: tabular-nums; font-weight: 500; }
+  .total-row td {
+    background: #FAFAFC;
+    font-weight: 600;
+    border-top: 2px solid #7B61FF;
+  }
+  .badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .badge-e { background: #E8F1FF; color: #2563EB; }
+  .badge-a { background: #FFE8F5; color: #C026D3; }
+  .badge-no { background: #FFF1E0; color: #B45309; }
+  .cat {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 500;
+    background: #F0EDFF;
+    color: #5B41DF;
+    white-space: nowrap;
+  }
+  .summary {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+  .stat {
+    background: white;
+    padding: 18px 16px;
+    border-radius: 12px;
+    border-left: 4px solid #7B61FF;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  }
+  .stat.highlight {
+    background: linear-gradient(135deg, #7B61FF 0%, #5B41DF 100%);
+    border-left: none;
+    color: white;
+  }
+  .stat-label { font-size: 10px; text-transform: uppercase; color: #6B6B85; letter-spacing: 0.5px; margin-bottom: 6px; }
+  .stat.highlight .stat-label { color: rgba(255,255,255,0.85); }
+  .stat-value { font-size: 22px; font-weight: 700; color: #1A1A2E; font-variant-numeric: tabular-nums; }
+  .stat.highlight .stat-value { color: white; }
+  .stat-sub { font-size: 11px; color: #6B6B85; margin-top: 4px; }
+  .stat.highlight .stat-sub { color: rgba(255,255,255,0.85); }
+  .balance-box {
+    background: linear-gradient(135deg, #FFF8E1 0%, #FFE7B0 100%);
+    border-left: 5px solid #F59E0B;
+    padding: 20px 24px;
+    border-radius: 12px;
+    margin-bottom: 24px;
+  }
+  .balance-box h3 { font-size: 16px; color: #92400E; margin-bottom: 8px; }
+  .balance-box .amount { font-size: 28px; font-weight: 700; color: #92400E; }
+  .balance-box .who { font-size: 14px; color: #78350F; margin-top: 4px; }
+  .props {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+  .prop-card {
+    background: #FAFAFC;
+    padding: 14px 16px;
+    border-radius: 10px;
+    border: 1px solid #F0EDFF;
+  }
+  .prop-card .name { font-size: 12px; color: #6B6B85; font-weight: 500; }
+  .prop-card .val { font-size: 18px; font-weight: 700; color: #1A1A2E; margin: 4px 0; }
+  .prop-card .pct { font-size: 11px; color: #7B61FF; font-weight: 600; }
+  .bar { height: 6px; background: #F0EDFF; border-radius: 3px; margin-top: 6px; overflow: hidden; }
+  .bar-fill { height: 100%; background: linear-gradient(90deg, #7B61FF, #C026D3); border-radius: 3px; }
+  .note { font-size: 12px; color: #6B6B85; margin-top: 10px; font-style: italic; }
+  .filters {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .filters label {
+    font-size: 12px;
+    color: #6B6B85;
+    font-weight: 500;
+    margin-right: 4px;
+  }
+  .filters select {
+    font-family: 'Sora', sans-serif;
+    padding: 8px 12px;
+    border: 1px solid #E5E1F5;
+    border-radius: 8px;
+    background: white;
+    font-size: 13px;
+    color: #1A1A2E;
+    cursor: pointer;
+  }
+  .filters select:focus {
+    outline: none;
+    border-color: #7B61FF;
+  }
+  .filters button {
+    font-family: 'Sora', sans-serif;
+    padding: 8px 14px;
+    border: none;
+    border-radius: 8px;
+    background: #F0EDFF;
+    color: #5B41DF;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  .filters button:hover { background: #E5E1F5; }
+  .filtered-summary {
+    background: #F0EDFF;
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    font-size: 13px;
+    color: #5B41DF;
+    font-weight: 500;
+  }
+  .day-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+  }
+  .day-card {
+    background: #FAFAFC;
+    padding: 16px;
+    border-radius: 10px;
+    border-left: 4px solid #7B61FF;
+    cursor: pointer;
+    transition: transform 0.15s;
+  }
+  .day-card:hover { transform: translateY(-2px); }
+  .day-card .day-name { font-size: 13px; color: #6B6B85; font-weight: 500; }
+  .day-card .day-date { font-size: 14px; color: #1A1A2E; font-weight: 600; margin: 4px 0; }
+  .day-card .day-amount { font-size: 22px; color: #7B61FF; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .day-card .day-count { font-size: 11px; color: #6B6B85; margin-top: 4px; }
+  .row-hidden { display: none !important; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <div>
+    <h1>Viaje Ámsterdam — Abril 2026</h1>
+    <p>Resumen de gastos · Ernesto & Adriana · 22-26 abril</p>
+  </div>
+  <div class="header-buttons">
+    <button class="pill-btn btn-e" onclick="openModal('modal-e')"><span class="circle">E</span> Mis gastos</button>
+    <button class="pill-btn btn-a" onclick="openModal('modal-a')"><span class="circle">A</span> Sus gastos</button>
+  </div>
+</header>
+
+<div class="modal-overlay" id="modal-e" onclick="if(event.target===this)closeModal('modal-e')">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>👤 Mis gastos (Ernesto)</h3>
+      <button class="close" onclick="closeModal('modal-e')">✕</button>
+    </div>
+    <table>
+      <thead><tr><th>Categoría</th><th class="num">Monto</th><th class="num">%</th></tr></thead>
+      <tbody>
+        <tr><td>🎵 Concierto (Rosalía + locker)</td><td class="num">€452.50</td><td class="num">29.1%</td></tr>
+        <tr><td>🛒 Compras personales</td><td class="num">€295.10</td><td class="num">19.0%</td></tr>
+        <tr><td>🏨 Hotel (mi 50%)</td><td class="num">€269.58</td><td class="num">17.4%</td></tr>
+        <tr><td>✈️ Vuelo KLM</td><td class="num">€230.00</td><td class="num">14.8%</td></tr>
+        <tr><td>🍽️ Alimentación (mi 50%)</td><td class="num">€151.31</td><td class="num">9.7%</td></tr>
+        <tr><td>🚇 Transporte (común+personal)</td><td class="num">€123.66</td><td class="num">8.0%</td></tr>
+        <tr><td>🛍️ Souvenirs común (mi 50%)</td><td class="num">€30.75</td><td class="num">2.0%</td></tr>
+      </tbody>
+    </table>
+    <div class="grand-total">
+      <div class="label">Total mis gastos</div>
+      <div class="val">€1,552.90</div>
+    </div>
+    <p class="note">Compras personales (€295.10) = ropa €216.10 + souvenirs propios €79. Saldo pendiente: debo €86.23 a Adriana.</p>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-a" onclick="if(event.target===this)closeModal('modal-a')">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>👤 Sus gastos (Adriana)</h3>
+      <button class="close" onclick="closeModal('modal-a')">✕</button>
+    </div>
+    <table>
+      <thead><tr><th>Categoría</th><th class="num">Monto</th><th class="num">%</th></tr></thead>
+      <tbody>
+        <tr><td>🏨 Hotel (su 50%)</td><td class="num">€269.58</td><td class="num">28.2%</td></tr>
+        <tr><td>✈️ Vuelo KLM</td><td class="num">€230.00</td><td class="num">24.1%</td></tr>
+        <tr><td>🎵 Concierto (Rosalía + locker)</td><td class="num">€152.50</td><td class="num">15.9%</td></tr>
+        <tr><td>🍽️ Alimentación (su 50%)</td><td class="num">€151.31</td><td class="num">15.8%</td></tr>
+        <tr><td>🚇 Transporte (común+personal)</td><td class="num">~€121.60</td><td class="num">12.7%</td></tr>
+        <tr><td>🛍️ Souvenirs común (su 50%)</td><td class="num">€30.75</td><td class="num">3.2%</td></tr>
+      </tbody>
+    </table>
+    <div class="grand-total">
+      <div class="label">Total sus gastos</div>
+      <div class="val">~€955.74</div>
+    </div>
+    <p class="note">Transporte personal estimado en ~€55. Cobra €86.23 de Ernesto.</p>
+  </div>
+</div>
+
+<div class="summary">
+  <div class="stat highlight"><div class="stat-label">Total Viaje</div><div class="stat-value">€2,213</div><div class="stat-sub">Todo incluido</div></div>
+  <div class="stat"><div class="stat-label">Para split (50/50)</div><div class="stat-value">€1,041.47</div><div class="stat-sub">Sin vuelos ni concierto</div></div>
+  <div class="stat"><div class="stat-label">Pagó Ernesto</div><div class="stat-value">€434.51</div><div class="stat-sub">20 transacciones</div></div>
+  <div class="stat"><div class="stat-label">Pagó Adriana</div><div class="stat-value">€606.96</div><div class="stat-sub">5 transacciones</div></div>
+  <div class="stat"><div class="stat-label">Por persona</div><div class="stat-value">€520.74</div><div class="stat-sub">50/50 común</div></div>
+</div>
+
+<div class="balance-box">
+  <h3>Saldo pendiente</h3>
+  <div class="amount">€86.23</div>
+  <div class="who">Ernesto debe a Adriana</div>
+</div>
+
+<div class="section">
+  <h2>Proporciones del viaje completo</h2>
+  <p style="font-size:13px; color:#6B6B85; margin-bottom:16px;">Total viaje: <strong>€2,213</strong> — incluye vuelos KLM (€460) y concierto Rosalía Gold (€600) ya pagados, más transporte personal aproximado.</p>
+  <div class="props">
+    <div class="prop-card">
+      <div class="name">🎵 Concierto (Rosalía + locker)</div>
+      <div class="val">€605.00</div>
+      <div class="pct">27.4%</div>
+      <div class="bar"><div class="bar-fill" style="width:27.4%"></div></div>
+    </div>
+    <div class="prop-card">
+      <div class="name">🏨 Hotel (3 noches)</div>
+      <div class="val">€539.16</div>
+      <div class="pct">24.4%</div>
+      <div class="bar"><div class="bar-fill" style="width:24.4%"></div></div>
+    </div>
+    <div class="prop-card">
+      <div class="name">✈️ Vuelos KLM (Paris ↔ AMS)</div>
+      <div class="val">€460.00</div>
+      <div class="pct">20.9%</div>
+      <div class="bar"><div class="bar-fill" style="width:20.9%"></div></div>
+    </div>
+    <div class="prop-card">
+      <div class="name">🍽️ Alimentación</div>
+      <div class="val">€302.61</div>
+      <div class="pct">13.7%</div>
+      <div class="bar"><div class="bar-fill" style="width:13.7%"></div></div>
+    </div>
+    <div class="prop-card">
+      <div class="name">🚇 Transporte total (común+personal)</div>
+      <div class="val">€243.30</div>
+      <div class="pct">11.0%</div>
+      <div class="bar"><div class="bar-fill" style="width:11.0%"></div></div>
+    </div>
+    <div class="prop-card">
+      <div class="name">🛍️ Souvenirs</div>
+      <div class="val">€61.50</div>
+      <div class="pct">2.8%</div>
+      <div class="bar"><div class="bar-fill" style="width:2.8%"></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h2>Detalle por categoría</h2>
+  <table>
+    <thead><tr><th>Categoría</th><th>Componentes</th><th class="num">Monto</th><th class="num">% del total</th></tr></thead>
+    <tbody>
+      <tr><td>🎵 Concierto</td><td>Rosalía Gold (ya pagado) + locker €5</td><td class="num">€605.00</td><td class="num">27.4%</td></tr>
+      <tr><td>🏨 Hotel</td><td>3 noches (Adriana, 22 abr)</td><td class="num">€539.16</td><td class="num">24.4%</td></tr>
+      <tr><td>✈️ Vuelos KLM</td><td>Paris ↔ AMS (ya pagado, €230 c/u)</td><td class="num">€460.00</td><td class="num">20.9%</td></tr>
+      <tr><td>🍽️ Alimentación</td><td>Restaurantes, snacks, supermercado, postres</td><td class="num">€302.61</td><td class="num">13.7%</td></tr>
+      <tr><td>🌷 Transp. tulipanes</td><td>Bolts ida y vuelta al campo (común, 50/50)</td><td class="num">€78.90</td><td class="num">3.6%</td></tr>
+      <tr><td>🛍️ Souvenirs</td><td>Tulip Barn</td><td class="num">€61.50</td><td class="num">2.8%</td></tr>
+      <tr><td>🚇 Transp. ciudad personal</td><td>OVpay + GVB (~€55 c/u, no split)</td><td class="num">~€110.00</td><td class="num">5.0%</td></tr>
+      <tr><td>✈️ Transp. aeropuerto</td><td>Bolt casa → CDG €40.10 (común)</td><td class="num">€40.10</td><td class="num">1.8%</td></tr>
+      <tr><td>🚆 Transp. ciudad común</td><td>Tren Schiphol (común, 50/50)</td><td class="num">€14.20</td><td class="num">0.6%</td></tr>
+      <tr class="total-row"><td colspan="2">Total viaje</td><td class="num">€2,211.47</td><td class="num">100%</td></tr>
+    </tbody>
+  </table>
+  <p class="note">Vuelos y concierto ya están pagados — no entran en el saldo pendiente. Solo se mantiene el saldo común de €86.23.</p>
+</div>
+
+<div class="section">
+  <h2>Gasto por día</h2>
+  <div class="day-grid">
+    <div class="day-card" onclick="setDayFilter('22 abr')">
+      <div class="day-name">Miércoles</div>
+      <div class="day-date">22 abr</div>
+      <div class="day-amount">€103.70</div>
+      <div class="day-count">4 gastos · viaje y concierto</div>
+    </div>
+    <div class="day-card" onclick="setDayFilter('23 abr')">
+      <div class="day-name">Jueves</div>
+      <div class="day-date">23 abr</div>
+      <div class="day-amount">€249.84</div>
+      <div class="day-count">10 gastos · tulipanes y ciudad</div>
+    </div>
+    <div class="day-card" onclick="setDayFilter('24 abr')">
+      <div class="day-name">Viernes</div>
+      <div class="day-date">24 abr</div>
+      <div class="day-amount">€81.89</div>
+      <div class="day-count">5 gastos · ciudad</div>
+    </div>
+    <div class="day-card" onclick="setDayFilter('25 abr')">
+      <div class="day-name">Sábado</div>
+      <div class="day-date">25 abr</div>
+      <div class="day-amount">€66.88</div>
+      <div class="day-count">5 gastos · ciudad y regreso</div>
+    </div>
+  </div>
+  <p class="note">No incluye hotel (€539.16, pagado el 22 abr).</p>
+</div>
+
+<div class="section">
+  <h2>Detalle de gastos comunes (con filtros)</h2>
+  <div class="filters">
+    <label>Categoría:</label>
+    <select id="filter-category" onchange="applyFilters()">
+      <option value="">Todas</option>
+      <option value="Hotel">🏨 Hotel</option>
+      <option value="Alimentación">🍽️ Alimentación</option>
+      <option value="Souvenirs">🛍️ Souvenirs</option>
+      <option value="Concierto">🎵 Concierto</option>
+      <option value="Transp. aeropuerto">✈️ Transp. aeropuerto</option>
+      <option value="Transp. ciudad">🚇 Transp. ciudad</option>
+      <option value="Transp. tulipanes">🌷 Transp. tulipanes</option>
+    </select>
+    <label>Día:</label>
+    <select id="filter-day" onchange="applyFilters()">
+      <option value="">Todos</option>
+      <option value="22 abr">Miércoles 22</option>
+      <option value="23 abr">Jueves 23</option>
+      <option value="24 abr">Viernes 24</option>
+      <option value="25 abr">Sábado 25</option>
+    </select>
+    <label>Pagó:</label>
+    <select id="filter-who" onchange="applyFilters()">
+      <option value="">Ambos</option>
+      <option value="E">Ernesto</option>
+      <option value="A">Adriana</option>
+    </select>
+    <button onclick="resetFilters()">Limpiar filtros</button>
+  </div>
+  <div class="filtered-summary" id="filter-summary">Total filtrado: €1,041.47 · 25 gastos</div>
+  <table id="expense-table">
+    <thead>
+      <tr>
+        <th>Fecha</th>
+        <th>Pagó</th>
+        <th>Categoría</th>
+        <th>Concepto</th>
+        <th>Detalle</th>
+        <th class="num">Monto</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr data-day="22 abr" data-cat="Transp. aeropuerto" data-who="E" data-amount="40.10">
+        <td>22 abr</td><td><span class="badge badge-e">Ernesto</span></td><td><span class="cat">✈️ Transp. aeropuerto</span></td><td>Bolt</td><td>Casa → CDG</td><td class="num">€40.10</td>
+      </tr>
+      <tr data-day="22 abr" data-cat="Alimentación" data-who="E" data-amount="32.50">
+        <td>22 abr</td><td><span class="badge badge-e">Ernesto</span></td><td><span class="cat">🍽️ Alimentación</span></td><td>Booven</td><td>Lunch miércoles</td><td class="num">€32.50</td>
+      </tr>
+      <tr data-day="22 abr" data-cat="Concierto" data-who="E" data-amount="5.00">
+        <td>22 abr</td><td><span class="badge badge-e">Ernesto</span></td><td><span class="cat">🎵 Concierto</span></td><td>Ziggo Dome</td><td>Locker concierto</td><td class="num">€5.00</td>
+      </tr>
+      <tr data-day="22 abr" data-cat="Alimentación" data-who="E" data-amount="26.10">
+        <td>22 abr</td><td><span class="badge badge-e">Ernesto</span></td><td><span class="cat">🍽️ Alimentación</span></td><td>The Steel Arch</td><td>McDonald's cena miércoles</td><td class="num">€26.10</td>
+      </tr>
+      <tr data-day="22 abr" data-cat="Hotel" data-who="A" data-amount="539.16">
+        <td>22 abr</td><td><span class="badge badge-a">Adriana</span></td><td><span class="cat">🏨 Hotel</span></td><td>Hotel</td><td>3 noches</td><td class="num">€539.16</td>
+      </tr>
+      <tr data-day="23 abr" data-cat="Alimentación" data-who="E" data-amount="4.39">
+        <td>23 abr</td><td><span class="badge badge-e">Ernesto</span></td><td><span class="cat">🍽️ Alimentación</span></td><td>Wundermart</td><td>Desayuno jueves</td><td class="num">€4.39</td>
+      </tr>
+      <tr data-day="23 abr" data-cat="Transp. tulipanes" data-who="E" data-amount="36.40">
+        <td>23 abr</td><td><span class="badge badge-e">Ernesto</span></td><td><span class="cat">🌷 Transp. tulipanes</span></td><td>Bolt</td><td>Bolt a Tulip Barn</td><td class="num">€36.40</td>
+      </tr>
+      <tr data-day="23 abr" data-cat="Transp. tulipanes" data-who="E" data-amount="5.60">
+        <td>23 abr</td><td><span class="badge badge-e">Ernesto</span></td><td><span class="cat">🌷 Transp. tulipanes</span></td><td>Bolt</td><td>Bolt</td><td class="num">€5.60</td>
+      </tr>
+      <tr data-day="23 abr" data-cat="Transp. tulipanes" data-who="A" data-amount="36.90">
+        <td>23 abr</td><td><span class="badge badge-a">Adriana</span></td><td><span class="cat">🌷 Transp. tulipanes</span></td><td>Bolt</td><td>Bolt a campo de tulipanes</td><td class="num">€36.90</td>
+      </tr>
+      <tr data-day="23 abr" data-cat="Alimentación" data-who="A" data-amount="17.75">
+        <td>23 abr</td><td><span class="badge badge-a">Adriana</span></td><td><span class="cat">🍽️ Alimentación</span></td><td>Campo tulipanes</td><td>Papas en el campo</td><td class="num">€17.75</td>
+      </tr>
+      <tr data-day="23 abr" data-cat="Alimentación" data-who="E" data-amount="13.00">
+        <td>23 abr</td><td><span class="badge badge-e">Ernesto</span></td><td><span class="cat">🍽️ Alimentación</span></td><td>The Tulip Barn</td><td>Postre</td><td class="num">€13.00</td>
+      </tr>
+      <tr data-day="23 abr" data-cat="Souvenirs" data-who="E" data-amount="61.50">
+        <td>23 abr</td><td><span class="badge badge-e">Ernesto</span></td><td><span class="cat">🛍️ Souvenirs</span></td><td>The Tulip Barn B.</td><td>Souvenirs</td><td class="num">€61.50</td>
+      </tr>
+      <tr data-day="23 abr" data-cat="Transp. ciudad" data-who="E" data-amount="14.20">
+        <td>23 abr</td><td><span class="badge badge-e">Ernesto</span></td><td><span class="cat">🚇 Transp. ciudad</span></td><td>Schiphol Airport</td><td>Ticket tren Schiphol</td><td class="num">€14.20</td>
+      </tr>
+      <tr data-day="23 abr" data-cat="Alimentación" data-who="E" data-amount="20.10">
+        <td>23 abr</td><td><span class="badge badge-e">Ernesto</span></td><td><span class="cat">🍽️ Alimentación</span></td><td>LS Leliestraat</td><td>Poffertjes postre</td><td class="num">€20.10</td>
+      </tr>
+      <tr data-day="23 abr" data-cat="Alimentación" data-who="E" data-amount="40.00">
+        <td>23 abr</td><td><span class="badge badge-e">Ernesto</span></td><td><span class="cat">🍽️ Alimentación</span></td><td>Hotel Torenzicht</td><td>Cena thai</td><td class="num">€40.00</td>
+      </tr>
+      <tr data-day="24 abr" data-cat="Alimentación" data-who="E" data-amount="40.50">
+        <td>24 abr</td><td><span class="badge badge-e">Ernesto</span></td><td><span class="cat">🍽️ Alimentación</span></td><td>Oliver Green</td><td>Lunch viernes</td><td class="num">€40.50</td>
+      </tr>
+      <tr data-day="24 abr" data-cat="Alimentación" data-who="E" data-amount="8.00">
+        <td>24 abr</td><td><span class="badge badge-e">Ernesto</span></td><td><span class="cat">🍽️ Alimentación</span></td><td>Original Stroo</td><td>Stroopwafels postre</td><td class="num">€8.00</td>
+      </tr>
+      <tr data-day="24 abr" data-cat="Alimentación" data-who="E" data-amount="3.99">
+        <td>24 abr</td><td><span class="badge badge-e">Ernesto</span></td><td><span class="cat">🍽️ Alimentación</span></td><td>Original Stroo</td><td>Stroopwafels postre</td><td class="num">€3.99</td>
+      </tr>
+      <tr data-day="24 abr" data-cat="Alimentación" data-who="E" data-amount="16.30">
+        <td>24 abr</td><td><span class="badge badge-e">Ernesto</span></td><td><span class="cat">🍽️ Alimentación</span></td><td>'t Pareltje</td><td>Papas snack</td><td class="num">€16.30</td>
+      </tr>
+      <tr data-day="24 abr" data-cat="Alimentación" data-who="E" data-amount="13.10">
+        <td>24 abr</td><td><span class="badge badge-e">Ernesto</span></td><td><span class="cat">🍽️ Alimentación</span></td><td>Albert Heijn</td><td>Desayuno sábado</td><td class="num">€13.10</td>
+      </tr>
+      <tr data-day="25 abr" data-cat="Alimentación" data-who="A" data-amount="6.00">
+        <td>25 abr</td><td><span class="badge badge-a">Adriana</span></td><td><span class="cat">🍽️ Alimentación</span></td><td>Van Stapele</td><td>Cookies snack</td><td class="num">€6.00</td>
+      </tr>
+      <tr data-day="25 abr" data-cat="Alimentación" data-who="A" data-amount="7.15">
+        <td>25 abr</td><td><span class="badge badge-a">Adriana</span></td><td><span class="cat">🍽️ Alimentación</span></td><td>Papas</td><td>Papas sábado</td><td class="num">€7.15</td>
+      </tr>
+      <tr data-day="25 abr" data-cat="Alimentación" data-who="E" data-amount="16.20">
+        <td>25 abr</td><td><span class="badge badge-e">Ernesto</span></td><td><span class="cat">🍽️ Alimentación</span></td><td>Subway</td><td>Lunch sábado</td><td class="num">€16.20</td>
+      </tr>
+      <tr data-day="25 abr" data-cat="Alimentación" data-who="E" data-amount="14.90">
+        <td>25 abr</td><td><span class="badge badge-e">Ernesto</span></td><td><span class="cat">🍽️ Alimentación</span></td><td>C&amp;m Beste Lekkernij</td><td>Tres leches postre</td><td class="num">€14.90</td>
+      </tr>
+      <tr data-day="25 abr" data-cat="Alimentación" data-who="E" data-amount="22.63">
+        <td>25 abr</td><td><span class="badge badge-e">Ernesto</span></td><td><span class="cat">🍽️ Alimentación</span></td><td>Albert Heijn</td><td>Súper para Francia</td><td class="num">€22.63</td>
+      </tr>
+    </tbody>
+  </table>
+  <p class="note">Aparte: Little Holland €15.45 — souvenirs hotel de Adriana <span class="badge badge-no">no split</span> (excluido del cálculo)</p>
+</div>
+
+<div class="section">
+  <h2>Cálculo del saldo</h2>
+  <table>
+    <tbody>
+      <tr><td>Total común</td><td class="num">€1,041.47</td></tr>
+      <tr><td>Por persona (50/50)</td><td class="num">€520.74</td></tr>
+      <tr><td>Pagó Ernesto</td><td class="num">€434.51</td></tr>
+      <tr><td>Pagó Adriana</td><td class="num">€606.96</td></tr>
+      <tr><td>Diferencia Ernesto (pagó - debe)</td><td class="num" style="color:#DC2626;">−€86.23</td></tr>
+      <tr><td>Diferencia Adriana (pagó - debe)</td><td class="num" style="color:#16A34A;">+€86.23</td></tr>
+      <tr class="total-row"><td><strong>Ernesto → Adriana</strong></td><td class="num"><strong>€86.23</strong></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="section">
+  <h2>Transporte personal Ernesto (Revolut, no split)</h2>
+  <table>
+    <thead><tr><th>Fecha</th><th>Servicio</th><th class="num">Monto</th></tr></thead>
+    <tbody>
+      <tr><td>22 abr</td><td>OVpay</td><td class="num">€4.30</td></tr>
+      <tr><td>22 abr</td><td>OVpay</td><td class="num">€5.28</td></tr>
+      <tr><td>22 abr</td><td>OVpay</td><td class="num">€0.19</td></tr>
+      <tr><td>23 abr</td><td>OVpay</td><td class="num">€1.29</td></tr>
+      <tr><td>23 abr</td><td>OVpay</td><td class="num">€2.22</td></tr>
+      <tr><td>23 abr</td><td>OVpay</td><td class="num">€3.19</td></tr>
+      <tr><td>23 abr</td><td>Tren Schiphol (mitad)</td><td class="num">€7.10</td></tr>
+      <tr><td>24 abr</td><td>OVpay</td><td class="num">€1.57</td></tr>
+      <tr><td>24 abr</td><td>OVpay</td><td class="num">€1.53</td></tr>
+      <tr><td>24 abr</td><td>OVpay</td><td class="num">€3.65</td></tr>
+      <tr><td>24 abr</td><td>GVB</td><td class="num">€16.00</td></tr>
+      <tr><td>24 abr</td><td>OVpay</td><td class="num">€3.56</td></tr>
+      <tr><td>25 abr</td><td>OVpay</td><td class="num">€3.15</td></tr>
+      <tr><td>25 abr</td><td>OVpay</td><td class="num">€1.74</td></tr>
+      <tr><td>25 abr</td><td>OVpay</td><td class="num">€2.29</td></tr>
+      <tr class="total-row"><td colspan="2">Total transporte Ernesto</td><td class="num">€57.06</td></tr>
+    </tbody>
+  </table>
+  <p class="note">Asumiendo gasto similar para Adriana (~€55), total transporte personal ambos ≈ €110.</p>
+</div>
+
+<div class="section">
+  <h2>🛒 Compras personales Ernesto (no split, control propio)</h2>
+  <table>
+    <thead><tr><th>Tipo</th><th>Item</th><th class="num">Monto</th></tr></thead>
+    <tbody>
+      <tr><td><span class="cat">👕 Ropa</span></td><td>Camisa Lacoste</td><td class="num">€30.00</td></tr>
+      <tr><td><span class="cat">👕 Ropa</span></td><td>Gymshark</td><td class="num">€46.25</td></tr>
+      <tr><td><span class="cat">👕 Ropa</span></td><td>Zara</td><td class="num">€79.90</td></tr>
+      <tr><td><span class="cat">🧥 Ropa</span></td><td>Chaqueta</td><td class="num">€59.95</td></tr>
+      <tr><td><span class="cat">🎁 Regalo</span></td><td>Regalo Roxana</td><td class="num">€10.00</td></tr>
+      <tr><td><span class="cat">🏠 Casa</span></td><td>Imanes casa</td><td class="num">€9.00</td></tr>
+      <tr><td><span class="cat">❓ Otro</span></td><td>Souvenir (sin identificar)</td><td class="num">€29.00</td></tr>
+      <tr><td><span class="cat">🍪 Snack</span></td><td>Galletas Van Stapele</td><td class="num">€26.00</td></tr>
+      <tr><td><span class="cat">🐰 Souvenir</span></td><td>Imán Miffy</td><td class="num">€5.00</td></tr>
+      <tr class="total-row"><td colspan="2">Total compras personales</td><td class="num">€295.10</td></tr>
+    </tbody>
+  </table>
+  <p class="note">Ropa: €216.10 · Souvenirs propios: €79.00 · No entra en el saldo común ni en proporciones del viaje compartido.</p>
+</div>
+
+</div>
+
+<script>
+function applyFilters() {
+  const cat = document.getElementById('filter-category').value;
+  const day = document.getElementById('filter-day').value;
+  const who = document.getElementById('filter-who').value;
+  const rows = document.querySelectorAll('#expense-table tbody tr');
+  let total = 0;
+  let count = 0;
+  rows.forEach(row => {
+    const matchCat = !cat || row.dataset.cat === cat;
+    const matchDay = !day || row.dataset.day === day;
+    const matchWho = !who || row.dataset.who === who;
+    if (matchCat && matchDay && matchWho) {
+      row.classList.remove('row-hidden');
+      total += parseFloat(row.dataset.amount);
+      count++;
+    } else {
+      row.classList.add('row-hidden');
+    }
+  });
+  document.getElementById('filter-summary').textContent =
+    `Total filtrado: €${total.toFixed(2)} · ${count} gasto${count !== 1 ? 's' : ''}`;
+}
+
+function resetFilters() {
+  document.getElementById('filter-category').value = '';
+  document.getElementById('filter-day').value = '';
+  document.getElementById('filter-who').value = '';
+  applyFilters();
+}
+
+function setDayFilter(day) {
+  document.getElementById('filter-day').value = day;
+  applyFilters();
+  document.getElementById('expense-table').scrollIntoView({behavior: 'smooth', block: 'start'});
+}
+
+function openModal(id) { document.getElementById(id).classList.add('show'); }
+function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.modal-overlay.show').forEach(m => m.classList.remove('show'));
+  }
+});
+</script>
+
+</body>
+</html>
