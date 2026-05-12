@@ -30,6 +30,25 @@
   header { position: relative; }
   header h1 { font-size: 28px; font-weight: 700; margin-bottom: 6px; }
   header p { font-size: 14px; opacity: 0.9; }
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,255,255,0.18);
+    border: 1.5px solid rgba(255,255,255,0.4);
+    color: white;
+    font-family: 'Sora', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 7px 14px;
+    border-radius: 999px;
+    text-decoration: none;
+    margin-bottom: 14px;
+    transition: background 0.15s, transform 0.1s;
+    letter-spacing: 0.5px;
+  }
+  .back-link:hover { background: rgba(255,255,255,0.32); transform: translateX(-2px); }
+  .back-link .arrow { font-size: 14px; line-height: 1; }
   .header-stamps {
     display: flex;
     gap: 14px;
@@ -368,6 +387,7 @@
 
 <header>
   <div>
+    <a href="index.html" class="back-link"><span class="arrow">←</span> Dashboard</a>
     <div class="header-stamps">
       <div class="stamp stamp-carcassonne">
         <div class="stamp-icon">🏰</div>
