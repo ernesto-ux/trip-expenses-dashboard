@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Finanzas Personales — 75012</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #222636;
+    --border: #2e3349;
+    --text: #e8eaf6;
+    --muted: #7b82a8;
+    --green: #4caf87;
+    --green-bg: rgba(76,175,135,0.12);
+    --red: #ef5350;
+    --red-bg: rgba(239,83,80,0.12);
+    --yellow: #f5a623;
+    --yellow-bg: rgba(245,166,35,0.12);
+    --blue: #5c7cfa;
+    --blue-bg: rgba(92,124,250,0.12);
+    --purple: #9c59d1;
+    --purple-bg: rgba(156,89,209,0.12);
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 14px; line-height: 1.5; padding: 24px; }
+  h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.3px; }
+  h2 { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; color: var(--muted); margin-bottom: 14px; }
+  h3 { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+  .header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 28px; flex-wrap: wrap; gap: 12px; }
+  .header-meta { color: var(--muted); font-size: 13px; margin-top: 4px; }
+  .badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; letter-spacing: 0.4px; }
+  .badge-red { background: var(--red-bg); color: var(--red); }
+  .badge-green { background: var(--green-bg); color: var(--green); }
+  .badge-yellow { background: var(--yellow-bg); color: var(--yellow); }
+  .badge-blue { background: var(--blue-bg); color: var(--blue); }
+
+  /* GRID */
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 20px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 20px; }
+  .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-bottom: 20px; }
+  .grid-1 { display: grid; grid-template-columns: 1fr; gap: 14px; margin-bottom: 20px; }
+  @media(max-width:900px) { .grid-4, .grid-3 { grid-template-columns: repeat(2, 1fr); } }
+  @media(max-width:600px) { .grid-4, .grid-3, .grid-2 { grid-template-columns: 1fr; } }
+
+  /* CARDS */
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 20px; }
+  .card-sm { padding: 14px 16px; }
+
+  /* STAT CARDS */
+  .stat-card { position: relative; overflow: hidden; }
+  .stat-card .icon { font-size: 26px; margin-bottom: 10px; }
+  .stat-card .amount { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 2px; }
+  .stat-card .label { color: var(--muted); font-size: 12px; font-weight: 500; }
+  .stat-card .sublabel { color: var(--muted); font-size: 11px; margin-top: 6px; }
+  .stat-green { border-left: 3px solid var(--green); }
+  .stat-red { border-left: 3px solid var(--red); }
+  .stat-yellow { border-left: 3px solid var(--yellow); }
+  .stat-blue { border-left: 3px solid var(--blue); }
+  .stat-purple { border-left: 3px solid var(--purple); }
+
+  /* ROWS */
+  .row { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-bottom: 1px solid var(--border); }
+  .row:last-child { border-bottom: none; }
+  .row-label { color: var(--text); font-size: 13px; }
+  .row-sub { color: var(--muted); font-size: 11px; margin-top: 1px; }
+  .row-amount { font-weight: 600; font-size: 13px; text-align: right; }
+  .amount-positive { color: var(--green); }
+  .amount-negative { color: var(--red); }
+  .amount-pending { color: var(--yellow); }
+  .amount-neutral { color: var(--muted); }
+
+  /* PROGRESS BAR */
+  .progress-wrap { margin: 10px 0 4px; }
+  .progress-label { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); margin-bottom: 5px; }
+  .progress-bar { height: 6px; background: var(--surface2); border-radius: 3px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 3px; transition: width 0.6s ease; }
+  .fill-green { background: var(--green); }
+  .fill-red { background: var(--red); }
+  .fill-yellow { background: var(--yellow); }
+  .fill-blue { background: var(--blue); }
+
+  /* ALERT */
+  .alert { padding: 14px 16px; border-radius: var(--radius-sm); margin-bottom: 20px; display: flex; align-items: flex-start; gap: 10px; }
+  .alert-red { background: var(--red-bg); border: 1px solid rgba(239,83,80,0.3); }
+  .alert-yellow { background: var(--yellow-bg); border: 1px solid rgba(245,166,35,0.3); }
+  .alert-green { background: var(--green-bg); border: 1px solid rgba(76,175,135,0.3); }
+  .alert-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+  .alert-body { font-size: 13px; }
+  .alert-body strong { display: block; font-weight: 600; margin-bottom: 2px; }
+  .alert-body .alert-red strong { color: var(--red); }
+  .alert-body .alert-yellow strong { color: var(--yellow); }
+
+  /* SECTION DIVIDER */
+  .section { margin-bottom: 28px; }
+  .section-title { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+  .section-line { flex: 1; height: 1px; background: var(--border); }
+
+  /* CHART */
+  .chart-container { position: relative; height: 220px; }
+  .chart-container-sm { position: relative; height: 180px; }
+
+  /* TABLE */
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { text-align: left; color: var(--muted); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; padding: 0 0 10px; border-bottom: 1px solid var(--border); }
+  td { padding: 9px 0; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  tr:last-child td { border-bottom: none; }
+  td:last-child, th:last-child { text-align: right; }
+
+  /* PILL TAG */
+  .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 600; margin-left: 6px; }
+  .tag-red { background: var(--red-bg); color: var(--red); }
+  .tag-yellow { background: var(--yellow-bg); color: var(--yellow); }
+  .tag-green { background: var(--green-bg); color: var(--green); }
+  .tag-blue { background: var(--blue-bg); color: var(--blue); }
+
+  /* TIMELINE */
+  .timeline { padding-left: 16px; border-left: 2px solid var(--border); }
+  .tl-item { position: relative; padding: 0 0 18px 18px; }
+  .tl-item:last-child { padding-bottom: 0; }
+  .tl-dot { position: absolute; left: -7px; top: 3px; width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--bg); }
+  .dot-red { background: var(--red); }
+  .dot-yellow { background: var(--yellow); }
+  .dot-green { background: var(--green); }
+  .dot-blue { background: var(--blue); }
+  .tl-title { font-weight: 600; font-size: 13px; }
+  .tl-sub { color: var(--muted); font-size: 12px; margin-top: 2px; }
+  .tl-amount { font-size: 13px; font-weight: 600; margin-top: 3px; }
+
+  /* FOOTER */
+  .footer { margin-top: 32px; padding-top: 20px; border-top: 1px solid var(--border); color: var(--muted); font-size: 11px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+</style>
+</head>
+<body>
+
+<div id="pin-gate" style="position:fixed; inset:0; background:linear-gradient(135deg, #1a1d27 0%, #0f1117 100%); display:flex; align-items:center; justify-content:center; z-index:99999; font-family:'Inter', -apple-system, BlinkMacSystemFont, sans-serif;">
+  <div style="background:#1a1d27; border:1px solid #2e3349; padding:40px 36px; border-radius:16px; box-shadow:0 20px 50px rgba(0,0,0,0.5); text-align:center; max-width:340px; width:90%;">
+    <div style="font-size:36px; margin-bottom:14px;">💳</div>
+    <div style="font-size:11px; color:#7b82a8; letter-spacing:2.5px; text-transform:uppercase; margin-bottom:10px; font-weight:600;">Acceso privado</div>
+    <h2 style="font-size:20px; font-weight:700; color:#e8eaf6; margin-bottom:8px;">Introduce el PIN</h2>
+    <p style="font-size:13px; color:#7b82a8; margin-bottom:22px;">Información financiera personal</p>
+    <input type="password" id="pin-input" inputmode="numeric" maxlength="6" autocomplete="off" style="width:100%; padding:14px; font-size:24px; text-align:center; letter-spacing:8px; border:2px solid #2e3349; border-radius:10px; font-family:inherit; font-weight:600; color:#e8eaf6; background:#222636; outline:none; margin-bottom:14px;" />
+    <button id="pin-submit" style="width:100%; padding:13px; font-size:14px; background:linear-gradient(135deg, #5c7cfa 0%, #4b6cf5 100%); color:white; border:none; border-radius:10px; font-family:inherit; font-weight:600; cursor:pointer; letter-spacing:0.5px;">Entrar</button>
+    <div id="pin-error" style="font-size:12px; color:#ef5350; margin-top:10px; min-height:16px; font-weight:500;"></div>
+  </div>
+</div>
+<script>
+(function(){var PIN='75012',KEY='finanzasUnlocked',g=document.getElementById('pin-gate'),i=document.getElementById('pin-input'),s=document.getElementById('pin-submit'),e=document.getElementById('pin-error');if(sessionStorage.getItem(KEY)==='1'){g.remove();return;}document.documentElement.style.overflow='hidden';setTimeout(function(){i.focus();},80);function c(){if(i.value===PIN){sessionStorage.setItem(KEY,'1');g.style.transition='opacity 0.3s';g.style.opacity='0';document.documentElement.style.overflow='';setTimeout(function(){g.remove();},320);}else{e.textContent='PIN incorrecto';i.value='';i.style.borderColor='#ef5350';setTimeout(function(){i.style.borderColor='#2e3349';},1200);}}s.addEventListener('click',c);i.addEventListener('keydown',function(ev){if(ev.key==='Enter')c();});})();
+</script>
+
+<!-- HEADER -->
+<div class="header">
+  <div>
+    <h1>💳 Finanzas Personales</h1>
+    <div class="header-meta">Ernesto Hernandez Otero · Paris 75012 · Mayo 2026</div>
+  </div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+    <span class="badge badge-red">CRISIS AMEX</span>
+    <span class="badge badge-yellow">Mayo activo</span>
+    <span style="color:var(--muted);font-size:12px;">Actualizado: 16 mayo 2026</span>
+  </div>
+</div>
+
+<!-- ALERTA CRÍTICA -->
+<div class="alert alert-red">
+  <span class="alert-icon">🚨</span>
+  <div class="alert-body">
+    <div class="alert-red"><strong>Prélèvement Amex de 2,003€ puede rechazarse</strong></div>
+    Con saldo SG de ~100€, el cargo directo genera descubierto de ~−1,903€. Llamar a Amex para aplazar 10-14 días hasta cobro Flowie. <strong>Tel: 01 47 77 72 00</strong>
+  </div>
+</div>
+
+<!-- KPIs PRINCIPALES -->
+<div class="section">
+  <div class="section-title"><h2>Resumen Mayo 2026</h2><div class="section-line"></div></div>
+  <div class="grid-4">
+
+    <div class="card stat-card stat-blue">
+      <div class="icon">🏦</div>
+      <div class="amount" style="color:var(--yellow)">~100€</div>
+      <div class="label">Saldo SG actual</div>
+      <div class="sublabel">Antes de cobro Flowie</div>
+    </div>
+
+    <div class="card stat-card stat-green">
+      <div class="icon">💼</div>
+      <div class="amount" style="color:var(--green)">+4,450€</div>
+      <div class="label">Ingresos esperados</div>
+      <div class="sublabel">Flowie 4,100 + Airbnb 350</div>
+    </div>
+
+    <div class="card stat-card stat-red">
+      <div class="icon">📤</div>
+      <div class="amount" style="color:var(--red)">−3,574€</div>
+      <div class="label">Salidas confirmadas</div>
+      <div class="sublabel">Amex + fijos + viaje + super</div>
+    </div>
+
+    <div class="card stat-card stat-green">
+      <div class="icon">🛡️</div>
+      <div class="amount" style="color:var(--green)">~576€</div>
+      <div class="label">Colchón proyectado</div>
+      <div class="sublabel">Si todo entra a tiempo</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- INGRESOS MAYO -->
+<div class="section">
+  <div class="section-title"><h2>Ingresos Mayo 2026</h2><div class="section-line"></div></div>
+  <div class="grid-2">
+
+    <div class="card">
+      <h3>Ingresos confirmados / esperados</h3>
+      <div style="margin-top:12px;">
+        <div class="row">
+          <div><div class="row-label">Flowie (salario)</div><div class="row-sub">Pago tardío, estimado fin de mes</div></div>
+          <div class="row-amount amount-positive">+4,100€</div>
+        </div>
+        <div class="row">
+          <div><div class="row-label">Airbnb El Salvador</div><div class="row-sub">Recuperación mantenimiento — pendiente cobro</div></div>
+          <div class="row-amount amount-pending">+350€</div>
+        </div>
+        <div class="row">
+          <div><div class="row-label">Adriana — Ruggerifit cuota</div><div class="row-sub">Pago a final de mes (lleva mes atrasado)</div></div>
+          <div class="row-amount amount-pending">+100€</div>
+        </div>
+        <div class="row">
+          <div><div class="row-label">Guayo — Hotel Carcassonne</div><div class="row-sub">Su mitad Domitys Carmina</div></div>
+          <div class="row-amount amount-pending">+134.50€</div>
+        </div>
+        <div class="row" style="border-top: 2px solid var(--border); margin-top:4px; padding-top:12px;">
+          <div><div class="row-label" style="font-weight:700;">Total disponible proyectado</div></div>
+          <div class="row-amount amount-positive" style="font-size:16px;">+4,784.50€</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Composición de ingresos</h3>
+      <div class="chart-container" style="height:210px;">
+        <canvas id="incomeChart"></canvas>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- GASTOS FIJOS MAYO -->
+<div class="section">
+  <div class="section-title"><h2>Gastos Fijos Mayo</h2><div class="section-line"></div></div>
+  <div class="grid-2">
+
+    <div class="card">
+      <h3>Obligaciones mensuales</h3>
+      <div style="margin-top:12px;">
+        <div class="row">
+          <div><div class="row-label">💳 Amex Gold (prélèvement)</div><div class="row-sub">Facturas marzo-abril · ¡URGENTE aplazar!</div></div>
+          <div class="row-amount amount-negative">−2,003.54€</div>
+        </div>
+        <div class="row">
+          <div><div class="row-label">🏠 Alquiler + servicios</div><div class="row-sub">Alquiler, luz, gas, internet</div></div>
+          <div class="row-amount amount-negative">~−888€</div>
+        </div>
+        <div class="row">
+          <div><div class="row-label">💰 Deuda / crédito</div><div class="row-sub">Cuotas mensuales</div></div>
+          <div class="row-amount amount-negative">~−298€</div>
+        </div>
+        <div class="row">
+          <div><div class="row-label">🏋️ Ruggerifit (coach)</div><div class="row-sub">200€ total — Adriana paga 100€</div></div>
+          <div class="row-amount amount-negative">−100€</div>
+        </div>
+        <div class="row">
+          <div><div class="row-label">💊 Suplementos</div><div class="row-sub">Estimado mes — reducido de programa</div></div>
+          <div class="row-amount amount-negative">~−60€</div>
+        </div>
+        <div class="row" style="border-top: 2px solid var(--border); margin-top:4px; padding-top:12px;">
+          <div><div class="row-label" style="font-weight:700;">Total fijos</div></div>
+          <div class="row-amount amount-negative" style="font-size:15px;">~−3,349€</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Gastos variables estimados</h3>
+      <div style="margin-top:12px;">
+        <div class="row">
+          <div><div class="row-label">🏰 Viaje Carcassonne / Toulouse</div><div class="row-sub">8-11 mayo · parte ya pagada</div></div>
+          <div class="row-amount amount-negative">~−295€</div>
+        </div>
+        <div class="row">
+          <div><div class="row-label">🛒 Supermercado</div><div class="row-sub">Estimado mensual reducido (vs 548€ real abril)</div></div>
+          <div class="row-amount amount-negative">~−250€</div>
+        </div>
+        <div class="row">
+          <div><div class="row-label">🍕 Restaurantes / ocio</div><div class="row-sub">Estimado — reducción forzada</div></div>
+          <div class="row-amount amount-negative">~−80€</div>
+        </div>
+        <div class="row" style="border-top: 2px solid var(--border); margin-top:4px; padding-top:12px;">
+          <div><div class="row-label" style="font-weight:700;">Total variables</div></div>
+          <div class="row-amount amount-negative" style="font-size:15px;">~−625€</div>
+        </div>
+        <div class="row" style="background:var(--green-bg);margin-top:8px;border-radius:8px;padding:10px 12px;border:none;">
+          <div><div class="row-label" style="font-weight:700;color:var(--green);">Colchón proyectado</div></div>
+          <div class="row-amount amount-positive" style="font-size:15px;">~576€</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- DESGLOSE BALANCE MAYO -->
+<div class="section">
+  <div class="section-title"><h2>Balance Proyectado Mayo</h2><div class="section-line"></div></div>
+  <div class="grid-2">
+    <div class="card">
+      <h3>Flujo de caja mayo</h3>
+      <div class="chart-container">
+        <canvas id="flowChart"></canvas>
+      </div>
+    </div>
+    <div class="card">
+      <h3>¿A dónde va el dinero?</h3>
+      <div class="chart-container">
+        <canvas id="expenseDonut"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ANÁLISIS ABRIL — QUÉ PASÓ -->
+<div class="section">
+  <div class="section-title"><h2>Análisis Abril 2026 — Por qué colapsó</h2><div class="section-line"></div></div>
+  <div class="grid-3">
+
+    <div class="card">
+      <h3>💸 Viaje Ámsterdam</h3>
+      <div style="color:var(--muted);font-size:12px;margin-bottom:12px;">Mayor impacto único del mes</div>
+      <div class="row">
+        <div class="row-label">Vuelos (ida y vuelta)</div>
+        <div class="row-amount amount-negative">~−400€</div>
+      </div>
+      <div class="row">
+        <div class="row-label">Ibis Airport (Adriana Amex)</div>
+        <div class="row-amount amount-negative">−539.16€</div>
+      </div>
+      <div class="row">
+        <div class="row-label">Airbnb / alojamiento Ernesto</div>
+        <div class="row-amount amount-negative">~−350€</div>
+      </div>
+      <div class="row">
+        <div class="row-label">Gastos varios en viaje</div>
+        <div class="row-amount amount-negative">~−400€</div>
+      </div>
+      <div class="row" style="border-top:2px solid var(--border);padding-top:10px;margin-top:4px;">
+        <div class="row-label" style="font-weight:700;">Total viaje</div>
+        <div class="row-amount amount-negative" style="font-size:15px;">~−2,100€</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>🛍️ Compras online / moda</h3>
+      <div style="color:var(--muted);font-size:12px;margin-bottom:12px;">Compras no esenciales acumuladas</div>
+      <div class="row">
+        <div class="row-label">Golden Goose (sneakers)</div>
+        <div class="row-amount amount-negative">−460€</div>
+      </div>
+      <div class="row">
+        <div class="row-label">Printemps (Ralph Lauren)</div>
+        <div class="row-amount amount-negative">n/d</div>
+      </div>
+      <div class="row">
+        <div class="row-label">Sklum (muebles)</div>
+        <div class="row-amount amount-negative">−274€</div>
+      </div>
+      <div class="row">
+        <div class="row-label">DeMellier (bolso — cuotas)</div>
+        <div class="row-amount amount-negative">−168€</div>
+      </div>
+      <div class="row">
+        <div class="row-label">Gymshark</div>
+        <div class="row-amount amount-negative">n/d</div>
+      </div>
+      <div class="row" style="border-top:2px solid var(--border);padding-top:10px;margin-top:4px;">
+        <div class="row-label" style="font-weight:700;">Estimado sin Printemps/GS</div>
+        <div class="row-amount amount-negative" style="font-size:15px;">~−900€+</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>🏠 Fijos + Alimentación</h3>
+      <div style="color:var(--muted);font-size:12px;margin-bottom:12px;">Base mensual inevitable</div>
+      <div class="row">
+        <div class="row-label">Alquiler + servicios</div>
+        <div class="row-amount amount-negative">~−888€</div>
+      </div>
+      <div class="row">
+        <div class="row-label">Ruggerifit (coach)</div>
+        <div class="row-amount amount-negative">−200€</div>
+      </div>
+      <div class="row">
+        <div class="row-label">Supermercado (ambos)</div>
+        <div class="row-amount amount-negative">−548€</div>
+      </div>
+      <div class="row">
+        <div class="row-label">Suplementos</div>
+        <div class="row-amount amount-negative">−182€</div>
+      </div>
+      <div class="row">
+        <div class="row-label">Restaurantes (Louie Louie, etc.)</div>
+        <div class="row-amount amount-negative">~−120€</div>
+      </div>
+      <div class="row" style="border-top:2px solid var(--border);padding-top:10px;margin-top:4px;">
+        <div class="row-label" style="font-weight:700;">Total fijos+alimentación</div>
+        <div class="row-amount amount-negative" style="font-size:15px;">~−1,938€</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GRÁFICO ABRIL -->
+  <div class="card" style="margin-top:14px;">
+    <h3>Distribución de gastos — Abril 2026</h3>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:center;">
+      <div class="chart-container">
+        <canvas id="aprilChart"></canvas>
+      </div>
+      <div>
+        <div class="progress-wrap">
+          <div class="progress-label"><span>🏖️ Viaje Ámsterdam</span><span>~2,100€ · 42%</span></div>
+          <div class="progress-bar"><div class="progress-fill fill-red" style="width:42%"></div></div>
+        </div>
+        <div class="progress-wrap">
+          <div class="progress-label"><span>🏠 Fijos mensuales</span><span>~1,088€ · 22%</span></div>
+          <div class="progress-bar"><div class="progress-fill fill-blue" style="width:22%"></div></div>
+        </div>
+        <div class="progress-wrap">
+          <div class="progress-label"><span>🛒 Super + suplementos</span><span>730€ · 15%</span></div>
+          <div class="progress-bar"><div class="progress-fill fill-yellow" style="width:15%"></div></div>
+        </div>
+        <div class="progress-wrap">
+          <div class="progress-label"><span>🛍️ Moda / compras</span><span>~900€+ · 18%</span></div>
+          <div class="progress-bar"><div class="progress-fill fill-red" style="width:18%"></div></div>
+        </div>
+        <div class="progress-wrap">
+          <div class="progress-label"><span>🍕 Restaurantes / ocio</span><span>~120€ · 2%</span></div>
+          <div class="progress-bar"><div class="progress-fill fill-green" style="width:2%"></div></div>
+        </div>
+        <div style="margin-top:16px;padding:12px;background:var(--red-bg);border-radius:8px;font-size:13px;">
+          <strong style="color:var(--red);">Conclusión:</strong> El colapso fue la suma de 3 shocks simultáneos: Ámsterdam (~42%), compras grandes (~18%), y el gasto base inevitable (~40%). Sin el viaje y las compras, el mes era sostenible.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ALIMENTACIÓN — NUTRIA VS REALIDAD -->
+<div class="section">
+  <div class="section-title"><h2>Alimentación — NutrIA vs Realidad</h2><div class="section-line"></div></div>
+  <div class="grid-3">
+
+    <div class="card stat-card stat-blue">
+      <div class="icon">📱</div>
+      <div class="amount" style="color:var(--blue)">226€</div>
+      <div class="label">NutrIA estima (comidas registradas)</div>
+      <div class="sublabel">Solo comidas logueadas en la app</div>
+    </div>
+
+    <div class="card stat-card stat-red">
+      <div class="icon">🧾</div>
+      <div class="amount" style="color:var(--red)">730€</div>
+      <div class="label">Gasto real super + suplementos</div>
+      <div class="sublabel">548€ super + 182€ suplementos</div>
+    </div>
+
+    <div class="card stat-card stat-yellow">
+      <div class="icon">🔍</div>
+      <div class="amount" style="color:var(--yellow)">504€</div>
+      <div class="label">Brecha no explicada</div>
+      <div class="sublabel">Hogar, comida no logueada, desperdicio</div>
+    </div>
+
+  </div>
+
+  <div class="card">
+    <h3>¿Por qué el super es tan alto?</h3>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:12px;">
+      <div>
+        <div class="row">
+          <div class="row-label">Supermercado (ambos, sin Ámsterdam)</div>
+          <div class="row-amount amount-negative">548€</div>
+        </div>
+        <div class="row">
+          <div class="row-label">Suplementos (Ernesto)</div>
+          <div class="row-amount amount-negative">182€</div>
+        </div>
+        <div class="row">
+          <div class="row-label">Total alimentación real</div>
+          <div class="row-amount amount-negative" style="font-size:15px;">730€</div>
+        </div>
+        <div class="row">
+          <div class="row-label">Per cápita (÷2 personas)</div>
+          <div class="row-amount">~274€/persona</div>
+        </div>
+        <div class="row">
+          <div class="row-label">Objetivo realista (macros)</div>
+          <div class="row-amount amount-positive">~200€/persona</div>
+        </div>
+        <div class="row">
+          <div class="row-label">Exceso estimado</div>
+          <div class="row-amount amount-pending">~148€</div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:10px;">Causas de la brecha NutrIA ↔ realidad:</div>
+        <div class="tl-item" style="padding-left:14px;padding-bottom:12px;">
+          <div style="font-size:13px;">🏪 <strong>Franprix diario</strong> vs compra semanal grande — coste 15-20% más alto por unidad</div>
+        </div>
+        <div class="tl-item" style="padding-left:14px;padding-bottom:12px;">
+          <div style="font-size:13px;">🧴 <strong>Productos del hogar</strong> incluidos en tickets de super (no es solo comida)</div>
+        </div>
+        <div class="tl-item" style="padding-left:14px;padding-bottom:12px;">
+          <div style="font-size:13px;">📋 <strong>Comidas no registradas</strong> en NutrIA — snacks, café, comida espontánea</div>
+        </div>
+        <div class="tl-item" style="padding-left:14px;padding-bottom:0;">
+          <div style="font-size:13px;">💊 <strong>Suplementos programados</strong> — cancelados, pero 60€/mes de reposición estimada</div>
+        </div>
+        <div style="margin-top:12px;padding:10px;background:var(--blue-bg);border-radius:8px;font-size:12px;">
+          <strong style="color:var(--blue);">Plan:</strong> Compra semanal en Lidl/Carrefour Market en vez de Franprix diario → ahorro estimado 80-100€/mes
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DEUDAS A COBRAR Y PAGAR -->
+<div class="section">
+  <div class="section-title"><h2>Deudas pendientes</h2><div class="section-line"></div></div>
+  <div class="grid-2">
+
+    <div class="card">
+      <h3 style="color:var(--green);">💰 A cobrar</h3>
+      <div style="margin-top:12px;">
+        <div class="row">
+          <div>
+            <div class="row-label">Guayo — Hotel Carcassonne</div>
+            <div class="row-sub">Su mitad Domitys Carmina (viaje mayo)</div>
+          </div>
+          <div style="text-align:right;">
+            <div class="row-amount amount-pending">+134.50€</div>
+            <span class="tag tag-yellow">PENDIENTE</span>
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <div class="row-label">Adriana — Ruggerifit cuota</div>
+            <div class="row-sub">Pago tardío, fin de mayo</div>
+          </div>
+          <div style="text-align:right;">
+            <div class="row-amount amount-pending">+100€</div>
+            <span class="tag tag-yellow">PENDIENTE</span>
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <div class="row-label">Airbnb El Salvador</div>
+            <div class="row-sub">Recuperación gastos mantenimiento</div>
+          </div>
+          <div style="text-align:right;">
+            <div class="row-amount amount-pending">+350€</div>
+            <span class="tag tag-yellow">GESTIONAR</span>
+          </div>
+        </div>
+        <div class="row" style="border-top:2px solid var(--border);padding-top:10px;margin-top:4px;">
+          <div class="row-label" style="font-weight:700;">Total a cobrar</div>
+          <div class="row-amount amount-positive" style="font-size:15px;">+584.50€</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="color:var(--red);">📤 A pagar / obligaciones</h3>
+      <div style="margin-top:12px;">
+        <div class="row">
+          <div>
+            <div class="row-label">Amex Gold prélèvement</div>
+            <div class="row-sub">Facturas mar-abr — aplazar urgente</div>
+          </div>
+          <div style="text-align:right;">
+            <div class="row-amount amount-negative">−2,003.54€</div>
+            <span class="tag tag-red">URGENTE</span>
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <div class="row-label">Mercure Toulouse</div>
+            <div class="row-sub">Cargado en Amex Adriana — reembolsar en junio</div>
+          </div>
+          <div style="text-align:right;">
+            <div class="row-amount amount-negative">−117€</div>
+            <span class="tag tag-blue">JUNIO</span>
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <div class="row-label">DeMellier (cuotas bolso)</div>
+            <div class="row-sub">Cuotas mensuales en curso</div>
+          </div>
+          <div style="text-align:right;">
+            <div class="row-amount amount-negative">n/d</div>
+            <span class="tag tag-yellow">MENSUAL</span>
+          </div>
+        </div>
+        <div class="row" style="border-top:2px solid var(--border);padding-top:10px;margin-top:4px;">
+          <div class="row-label" style="font-weight:700;">Urgente este mes</div>
+          <div class="row-amount amount-negative" style="font-size:15px;">−2,003.54€</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ACCIONES URGENTES -->
+<div class="section">
+  <div class="section-title"><h2>Plan de acción</h2><div class="section-line"></div></div>
+  <div class="card">
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-dot dot-red"></div>
+        <div class="tl-title">🚨 Llamar Amex — aplazar prélèvement <span class="tag tag-red">HOY</span></div>
+        <div class="tl-sub">Tel: 01 47 77 72 00 · Pedir 10-14 días de aplazamiento por décalage de salaire</div>
+        <div class="tl-amount amount-negative">Riesgo si no se actúa: descubierto −1,903€</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot dot-yellow"></div>
+        <div class="tl-title">💰 Gestionar recuperación Airbnb El Salvador <span class="tag tag-yellow">ESTA SEMANA</span></div>
+        <div class="tl-sub">Contactar para cobrar los 350€ de mantenimiento</div>
+        <div class="tl-amount amount-positive">+350€</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot dot-yellow"></div>
+        <div class="tl-title">💸 Cobrar a Guayo su parte del hotel <span class="tag tag-yellow">PRONTO</span></div>
+        <div class="tl-sub">134.50€ por Domitys Carmina Carcassonne</div>
+        <div class="tl-amount amount-positive">+134.50€</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot dot-blue"></div>
+        <div class="tl-title">🏦 Verificar límite découvert SG <span class="tag tag-blue">INFORMATIVO</span></div>
+        <div class="tl-sub">Saber cuánto cubre el banco en caso de cargo inesperado</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot dot-green"></div>
+        <div class="tl-title">🛒 Cambiar hábito de compra — Lidl/Carrefour semanal <span class="tag tag-green">MAYO</span></div>
+        <div class="tl-sub">Dejar Franprix diario · ahorro estimado 80-100€/mes</div>
+        <div class="tl-amount amount-positive">+~90€/mes</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- VIAJE CARCASSONNE / TOULOUSE -->
+<div class="section">
+  <div class="section-title"><h2>Viaje Carcassonne / Toulouse — 8-11 mayo</h2><div class="section-line"></div></div>
+  <div class="grid-3">
+    <div class="card stat-card stat-blue">
+      <div class="icon">🏰</div>
+      <div class="amount" style="color:var(--blue)">~685€</div>
+      <div class="label">Coste total Ernesto</div>
+      <div class="sublabel">Incluyendo lo adelantado</div>
+    </div>
+    <div class="card stat-card stat-green">
+      <div class="icon">✅</div>
+      <div class="amount" style="color:var(--green)">453€</div>
+      <div class="label">Ya pagado</div>
+      <div class="sublabel">Reservas previas</div>
+    </div>
+    <div class="card stat-card stat-yellow">
+      <div class="icon">⏳</div>
+      <div class="amount" style="color:var(--yellow)">~232€</div>
+      <div class="label">Pendiente / Guayo a cobrar</div>
+      <div class="sublabel">Hotel Mercure 117€ en Amex Adriana (junio)</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="row">
+      <div class="row-label">Domitys Carmina (Carcassonne)</div>
+      <div class="row-amount">Pagado — 134.50€ a cobrar de Guayo</div>
+    </div>
+    <div class="row">
+      <div class="row-label">Mercure Toulouse</div>
+      <div class="row-amount amount-negative">117€ — Amex Adriana (reembolsar junio)</div>
+    </div>
+    <div class="row">
+      <div class="row-label">Transporte + comidas + actividades</div>
+      <div class="row-amount">Incluido en estimado 685€</div>
+    </div>
+  </div>
+</div>
+
+<!-- COMPARATIVA INGRESOS VS GASTOS -->
+<div class="section">
+  <div class="section-title"><h2>Comparativa ingresos vs gastos — últimos meses</h2><div class="section-line"></div></div>
+  <div class="card">
+    <div class="chart-container" style="height:250px;">
+      <canvas id="compareChart"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <span>📊 Dashboard Finanzas Personales · Ernesto Hernandez Otero · 75012 Paris</span>
+  <span>Datos: SG Bank · Amex Gold · Revolut Adriana · NutrIA · Amazon · Mayo 2026</span>
+</div>
+
+<script>
+const colors = {
+  green: '#4caf87', red: '#ef5350', yellow: '#f5a623',
+  blue: '#5c7cfa', purple: '#9c59d1', muted: '#7b82a8',
+  greenBg: 'rgba(76,175,135,0.15)', redBg: 'rgba(239,83,80,0.15)',
+  yellowBg: 'rgba(245,166,35,0.15)', blueBg: 'rgba(92,124,250,0.15)'
+};
+const defaults = {
+  plugins: {
+    legend: { labels: { color: '#e8eaf6', font: { size: 12 }, padding: 16 } }
+  },
+  scales: {
+    x: { ticks: { color: '#7b82a8' }, grid: { color: '#2e3349' } },
+    y: { ticks: { color: '#7b82a8' }, grid: { color: '#2e3349' } }
+  }
+};
+
+// INCOME DONUT
+new Chart(document.getElementById('incomeChart'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Flowie (salario)', 'Airbnb El Salvador', 'Adriana (Ruggerifit)', 'Guayo (hotel)'],
+    datasets: [{ data: [4100, 350, 100, 134.50], backgroundColor: [colors.green, colors.blue, colors.yellow, colors.purple], borderWidth: 0, hoverOffset: 6 }]
+  },
+  options: { cutout: '65%', plugins: { legend: { position: 'right', labels: { color: '#e8eaf6', font: { size: 11 }, padding: 10, boxWidth: 12 } } } }
+});
+
+// FLOW BAR CHART (mayo)
+new Chart(document.getElementById('flowChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Disponible', 'Fijos', 'Variables', 'Colchón'],
+    datasets: [{
+      data: [4550, -3349, -625, 576],
+      backgroundColor: [colors.green, colors.red, colors.yellow, colors.green],
+      borderRadius: 6, borderSkipped: false
+    }]
+  },
+  options: {
+    ...defaults,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { ticks: { color: '#7b82a8' }, grid: { color: '#2e3349' } },
+      y: { ticks: { color: '#7b82a8', callback: v => v + '€' }, grid: { color: '#2e3349' } }
+    }
+  }
+});
+
+// EXPENSE DONUT (mayo)
+new Chart(document.getElementById('expenseDonut'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Amex bill', 'Fijos hogar', 'Ruggerifit', 'Suplementos', 'Viaje', 'Super', 'Restaurantes'],
+    datasets: [{ data: [2003, 1186, 100, 60, 295, 250, 80], backgroundColor: [colors.red, colors.blue, colors.purple, colors.yellow, colors.green, '#e67e22', '#1abc9c'], borderWidth: 0, hoverOffset: 6 }]
+  },
+  options: { cutout: '60%', plugins: { legend: { position: 'right', labels: { color: '#e8eaf6', font: { size: 11 }, padding: 8, boxWidth: 12 } } } }
+});
+
+// APRIL DONUT
+new Chart(document.getElementById('aprilChart'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Viaje Ámsterdam', 'Moda / compras', 'Fijos mensuales', 'Super + suple', 'Restaurantes'],
+    datasets: [{ data: [2100, 902, 1088, 730, 120], backgroundColor: [colors.red, '#e74c3c', colors.blue, colors.yellow, colors.green], borderWidth: 0, hoverOffset: 6 }]
+  },
+  options: { cutout: '60%', plugins: { legend: { display: false } } }
+});
+
+// COMPARE CHART
+new Chart(document.getElementById('compareChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Marzo 2026', 'Abril 2026', 'Mayo 2026 (proy.)'],
+    datasets: [
+      { label: 'Ingresos', data: [4100, 4100, 4550], backgroundColor: colors.greenBg, borderColor: colors.green, borderWidth: 2, borderRadius: 6 },
+      { label: 'Gastos totales', data: [2200, 4940, 3974], backgroundColor: colors.redBg, borderColor: colors.red, borderWidth: 2, borderRadius: 6 },
+      { label: 'Balance', data: [1900, -840, 576], backgroundColor: [colors.blueBg, colors.redBg, colors.blueBg], borderColor: [colors.blue, colors.red, colors.blue], borderWidth: 2, borderRadius: 6, type: 'line', yAxisID: 'y1' }
+    ]
+  },
+  options: {
+    plugins: { legend: { labels: { color: '#e8eaf6', font: { size: 12 }, padding: 16 } } },
+    scales: {
+      x: { ticks: { color: '#7b82a8' }, grid: { color: '#2e3349' } },
+      y: { ticks: { color: '#7b82a8', callback: v => v + '€' }, grid: { color: '#2e3349' }, title: { display: true, text: 'Ingresos / Gastos', color: '#7b82a8' } },
+      y1: { position: 'right', ticks: { color: '#7b82a8', callback: v => v + '€' }, grid: { drawOnChartArea: false }, title: { display: true, text: 'Balance', color: '#7b82a8' } }
+    }
+  }
+});
+</script>
+</body>
+</html>
