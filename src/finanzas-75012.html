@@ -195,16 +195,16 @@
 
     <div class="card stat-card stat-red">
       <div class="icon">📤</div>
-      <div class="amount" style="color:var(--red)">−3,574€</div>
+      <div class="amount" style="color:var(--red)">−4,288€</div>
       <div class="label">Salidas confirmadas</div>
       <div class="sublabel">Amex + fijos + viaje + super</div>
     </div>
 
-    <div class="card stat-card stat-green">
+    <div class="card stat-card stat-yellow">
       <div class="icon">🛡️</div>
-      <div class="amount" style="color:var(--green)">~576€</div>
+      <div class="amount" style="color:var(--yellow)">~262€</div>
       <div class="label">Colchón proyectado</div>
-      <div class="sublabel">Si todo entra a tiempo</div>
+      <div class="sublabel">Ajustado con fijos reales (2,100€)</div>
     </div>
 
   </div>
@@ -257,32 +257,82 @@
   <div class="grid-2">
 
     <div class="card">
-      <h3>Obligaciones mensuales</h3>
-      <div style="margin-top:12px;">
-        <div class="row">
-          <div><div class="row-label">💳 Amex Gold (prélèvement)</div><div class="row-sub">Facturas marzo-abril · ¡URGENTE aplazar!</div></div>
-          <div class="row-amount amount-negative">−2,003.54€</div>
+      <h3>Gastos fijos del hogar — 2,100€/mes</h3>
+      <div style="margin-top:4px;display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;">
+        <div style="background:var(--red-bg);border-radius:8px;padding:8px 14px;flex:1;min-width:120px;text-align:center;">
+          <div style="font-size:11px;color:var(--muted);margin-bottom:2px;">Total bruto</div>
+          <div style="font-size:18px;font-weight:700;color:var(--red);">2,100€</div>
         </div>
-        <div class="row">
-          <div><div class="row-label">🏠 Alquiler + servicios</div><div class="row-sub">Alquiler, luz, gas, internet</div></div>
-          <div class="row-amount amount-negative">~−888€</div>
+        <div style="background:var(--yellow-bg);border-radius:8px;padding:8px 14px;flex:1;min-width:120px;text-align:center;">
+          <div style="font-size:11px;color:var(--muted);margin-bottom:2px;">Adriana aporta</div>
+          <div style="font-size:18px;font-weight:700;color:var(--yellow);">−600€</div>
         </div>
-        <div class="row">
-          <div><div class="row-label">💰 Deuda / crédito</div><div class="row-sub">Cuotas mensuales</div></div>
-          <div class="row-amount amount-negative">~−298€</div>
+        <div style="background:var(--blue-bg);border-radius:8px;padding:8px 14px;flex:1;min-width:120px;text-align:center;">
+          <div style="font-size:11px;color:var(--muted);margin-bottom:2px;">Ernesto paga</div>
+          <div style="font-size:18px;font-weight:700;color:var(--blue);">1,500€</div>
         </div>
-        <div class="row">
-          <div><div class="row-label">🏋️ Ruggerifit (coach)</div><div class="row-sub">200€ total — Adriana paga 100€</div></div>
-          <div class="row-amount amount-negative">−100€</div>
-        </div>
-        <div class="row">
-          <div><div class="row-label">💊 Suplementos</div><div class="row-sub">Estimado mes — reducido de programa</div></div>
-          <div class="row-amount amount-negative">~−60€</div>
-        </div>
-        <div class="row" style="border-top: 2px solid var(--border); margin-top:4px; padding-top:12px;">
-          <div><div class="row-label" style="font-weight:700;">Total fijos</div></div>
-          <div class="row-amount amount-negative" style="font-size:15px;">~−3,349€</div>
-        </div>
+      </div>
+
+      <div style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">🏠 Vivienda</div>
+      <div class="row" style="padding:6px 0;">
+        <div class="row-label">Loyer (alquiler)</div><div class="row-amount amount-negative">—</div>
+      </div>
+      <div class="row" style="padding:6px 0;">
+        <div class="row-label">Oktopus Energy (electricidad)</div><div class="row-amount amount-negative">—</div>
+      </div>
+      <div class="row" style="padding:6px 0;">
+        <div class="row-label">Oktopus Gas</div><div class="row-amount amount-negative">—</div>
+      </div>
+      <div class="row" style="padding:6px 0;margin-bottom:8px;">
+        <div class="row-label">Internet — SFR</div><div class="row-amount amount-negative">—</div>
+      </div>
+
+      <div style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;margin-top:4px;">🛡️ Seguros / mutuelle</div>
+      <div class="row" style="padding:6px 0;">
+        <div class="row-label">Leo Care (seguro)</div><div class="row-amount amount-negative">—</div>
+      </div>
+      <div class="row" style="padding:6px 0;">
+        <div class="row-label">Assistance (seguro)</div><div class="row-amount amount-negative">—</div>
+      </div>
+      <div class="row" style="padding:6px 0;margin-bottom:8px;">
+        <div class="row-label">Mutuelle Baloo</div><div class="row-amount amount-negative">—</div>
+      </div>
+
+      <div style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;margin-top:4px;">📺 Suscripciones</div>
+      <div class="row" style="padding:6px 0;">
+        <div class="row-label">Netflix</div><div class="row-amount amount-negative">—</div>
+      </div>
+      <div class="row" style="padding:6px 0;">
+        <div class="row-label">Spotify</div><div class="row-amount amount-negative">—</div>
+      </div>
+      <div class="row" style="padding:6px 0;">
+        <div class="row-label">Disney+</div><div class="row-amount amount-negative">—</div>
+      </div>
+      <div class="row" style="padding:6px 0;margin-bottom:8px;">
+        <div class="row-label">Darty Max</div><div class="row-amount amount-negative">—</div>
+      </div>
+
+      <div style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;margin-top:4px;">💳 Créditos / cuotas</div>
+      <div class="row" style="padding:6px 0;">
+        <div><div class="row-label">Cama — Younited Credit</div><div class="row-sub">Cuota 7 de 24 · quedan 17</div></div>
+        <div class="row-amount amount-negative">—</div>
+      </div>
+      <div class="row" style="padding:6px 0;">
+        <div><div class="row-label">Refri — Darty</div><div class="row-sub">Cuota 7 de 20 · quedan 13</div></div>
+        <div class="row-amount amount-negative">—</div>
+      </div>
+      <div class="row" style="padding:6px 0;">
+        <div><div class="row-label">IKEA 3K</div><div class="row-sub">Cuota 6 de 20 · quedan 14</div></div>
+        <div class="row-amount amount-negative">—</div>
+      </div>
+      <div class="row" style="padding:6px 0;">
+        <div><div class="row-label">IKEA Nuevo</div><div class="row-sub">Cuota 2 de 10 · quedan 8</div></div>
+        <div class="row-amount amount-negative">—</div>
+      </div>
+
+      <div style="margin-top:12px;padding:10px 14px;background:var(--surface2);border-radius:8px;display:flex;justify-content:space-between;align-items:center;">
+        <span style="font-size:12px;color:var(--muted);">Agregar importes individuales para completar</span>
+        <span style="font-size:15px;font-weight:700;color:var(--blue);">Total neto: 1,500€</span>
       </div>
     </div>
 
@@ -305,9 +355,9 @@
           <div><div class="row-label" style="font-weight:700;">Total variables</div></div>
           <div class="row-amount amount-negative" style="font-size:15px;">~−625€</div>
         </div>
-        <div class="row" style="background:var(--green-bg);margin-top:8px;border-radius:8px;padding:10px 12px;border:none;">
-          <div><div class="row-label" style="font-weight:700;color:var(--green);">Colchón proyectado</div></div>
-          <div class="row-amount amount-positive" style="font-size:15px;">~576€</div>
+        <div class="row" style="background:var(--yellow-bg);margin-top:8px;border-radius:8px;padding:10px 12px;border:none;">
+          <div><div class="row-label" style="font-weight:700;color:var(--yellow);">Colchón proyectado</div><div class="row-sub">Con fijos reales 1,500€ neto</div></div>
+          <div class="row-amount amount-pending" style="font-size:15px;">~262€</div>
         </div>
       </div>
     </div>
@@ -752,7 +802,7 @@ new Chart(document.getElementById('flowChart'), {
   data: {
     labels: ['Disponible', 'Fijos', 'Variables', 'Colchón'],
     datasets: [{
-      data: [4550, -3349, -625, 576],
+      data: [4550, -3663, -625, 262],
       backgroundColor: [colors.green, colors.red, colors.yellow, colors.green],
       borderRadius: 6, borderSkipped: false
     }]
@@ -771,8 +821,8 @@ new Chart(document.getElementById('flowChart'), {
 new Chart(document.getElementById('expenseDonut'), {
   type: 'doughnut',
   data: {
-    labels: ['Amex bill', 'Fijos hogar', 'Ruggerifit', 'Suplementos', 'Viaje', 'Super', 'Restaurantes'],
-    datasets: [{ data: [2003, 1186, 100, 60, 295, 250, 80], backgroundColor: [colors.red, colors.blue, colors.purple, colors.yellow, colors.green, '#e67e22', '#1abc9c'], borderWidth: 0, hoverOffset: 6 }]
+    labels: ['Amex bill', 'Fijos hogar (neto)', 'Ruggerifit', 'Suplementos', 'Viaje', 'Super', 'Restaurantes'],
+    datasets: [{ data: [2003, 1500, 100, 60, 295, 250, 80], backgroundColor: [colors.red, colors.blue, colors.purple, colors.yellow, colors.green, '#e67e22', '#1abc9c'], borderWidth: 0, hoverOffset: 6 }]
   },
   options: { cutout: '60%', plugins: { legend: { position: 'right', labels: { color: '#e8eaf6', font: { size: 11 }, padding: 8, boxWidth: 12 } } } }
 });
