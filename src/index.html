@@ -100,82 +100,6 @@
     border-left: 4px solid #7B61FF;
   }
 
-  .saldos-section {
-    background: white;
-    border-radius: 16px;
-    padding: 24px 28px;
-    margin-bottom: 36px;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.05);
-    border-left: 4px solid #7B61FF;
-  }
-  .saldos-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    margin-bottom: 16px;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-  .saldos-title {
-    font-size: 13px;
-    text-transform: uppercase;
-    letter-spacing: 2.5px;
-    color: #7B61FF;
-    font-weight: 700;
-  }
-  .saldos-mini {
-    font-size: 12px;
-    color: #6B6B85;
-    font-weight: 500;
-  }
-  .saldos-mini strong { color: #1A1A2E; font-weight: 700; }
-  .saldos-mini .open { color: #DC2626; }
-  .saldos-mini .settled { color: #16A34A; }
-  .saldos-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 13px;
-  }
-  .saldos-table th {
-    text-align: left;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-size: 10px;
-    color: #6B6B85;
-    font-weight: 600;
-    padding: 10px 12px;
-    border-bottom: 2px solid #F0EDFA;
-  }
-  .saldos-table td {
-    padding: 12px;
-    border-bottom: 1px solid #F5F3FB;
-    color: #1A1A2E;
-    vertical-align: middle;
-  }
-  .saldos-table tr:last-child td { border-bottom: none; }
-  .saldos-table .num { text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; }
-  .pill {
-    display: inline-block;
-    padding: 3px 10px;
-    border-radius: 999px;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.3px;
-  }
-  .pill-open {
-    background: #FEE2E2;
-    color: #B91C1C;
-  }
-  .pill-settled {
-    background: #DCFCE7;
-    color: #15803D;
-  }
-  .saldos-table .muted { color: #8A86A8; }
-  @media (max-width: 640px) {
-    .saldos-section { padding: 18px 16px; }
-    .saldos-table { font-size: 12px; }
-    .saldos-table th, .saldos-table td { padding: 8px 6px; }
-  }
 
   .timeline {
     position: relative;
@@ -452,49 +376,6 @@
     <div class="stat-value">2</div>
     <div class="stat-sub">Abril · Mayo</div>
   </div>
-</div>
-
-<div class="saldos-section">
-  <div class="saldos-header">
-    <div class="saldos-title">Saldos entre viajeros</div>
-    <div class="saldos-mini">
-      <span class="open">●</span> Abiertos: <strong>1</strong> · €298.92 &nbsp;·&nbsp;
-      <span class="settled">●</span> Liquidados YTD: <strong>1</strong> · €86.23
-    </div>
-  </div>
-  <table class="saldos-table">
-    <thead>
-      <tr>
-        <th>Estado</th>
-        <th>Viaje</th>
-        <th>Dirección</th>
-        <th class="num">Monto</th>
-        <th>Liquidado</th>
-        <th>Método</th>
-        <th>Nota</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="pill pill-open">Abierto</span></td>
-        <td>Toulouse + Carcassonne 🏰🌸</td>
-        <td>Ernesto → Adriana</td>
-        <td class="num">€298.92</td>
-        <td class="muted">—</td>
-        <td class="muted">—</td>
-        <td class="muted">Guayo ya saldó su parte</td>
-      </tr>
-      <tr>
-        <td><span class="pill pill-settled">Liquidado</span></td>
-        <td>Ámsterdam 🌷</td>
-        <td>Ernesto → Adriana</td>
-        <td class="num">€86.23</td>
-        <td>2026-05-17</td>
-        <td>Revolut</td>
-        <td class="muted">Saldo común del viaje</td>
-      </tr>
-    </tbody>
-  </table>
 </div>
 
 <div class="timeline-title">Storyline cronológico</div>
